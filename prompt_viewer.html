@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Prompt Compression Viewer</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Courier New', monospace;
+    background: #0f0f0f;
+    color: #d4d4d4;
+    padding: 24px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  h1 {
+    color: #e8e8e8;
+    font-size: 16px;
+    font-weight: normal;
+    margin-bottom: 20px;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid #2a2a2a;
+    padding-bottom: 12px;
+  }
+  h1 span {
+    color: #666;
+    font-size: 12px;
+    margin-left: 12px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 28px 1fr 1fr 180px 180px;
+    gap: 0;
+    border: 1px solid #2a2a2a;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .header {
+    background: #1a1a1a;
+    color: #888;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 8px 12px;
+    border-bottom: 1px solid #2a2a2a;
+    font-weight: bold;
+  }
+  .cell {
+    padding: 10px 12px;
+    border-bottom: 1px solid #1e1e1e;
+    vertical-align: top;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .row:hover .cell {
+    background: #161616;
+  }
+  .row:last-child .cell {
+    border-bottom: none;
+  }
+  .num {
+    color: #444;
+    font-size: 11px;
+    text-align: right;
+    user-select: none;
+  }
+  .uncompressed { color: #c8d8a8; }
+  .compressed { color: #88b8d8; }
+  .output-u { color: #d4a8a8; }
+  .output-c {
+    color: #d4c8a8;
+  }
+  .output-c.mismatch { color: #e8a060; }
+  .badge {
+    display: inline-block;
+    font-size: 10px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    margin-left: 6px;
+    vertical-align: middle;
+    background: #2a2a2a;
+    color: #888;
+  }
+  .badge.match { background: #1a3a1a; color: #6a9a6a; }
+  .badge.diff  { background: #3a2a1a; color: #c07040; }
+</style>
+</head>
+<body>
+<h1>Prompt Compression Results <span>first 50 rows</span></h1>
+<div class="grid">
+  <div class="header num">#</div>
+  <div class="header uncompressed">Uncompressed Prompt</div>
+  <div class="header compressed">Compressed Prompt</div>
+  <div class="header output-u">Uncompressed Output</div>
+  <div class="header output-c">Compressed Output</div>
+
+  <script>
+  const data = [{"id":"56be85543aeaaa14008c9063","uncompressed_prompt":"When did Beyonce start becoming popular?","compressed_prompt":"When Bey start becoming popular","compressed_output":"1,                ,","uncompressed_output":"Beyoncé started gaining popularity in the late 1990s as a member of the R&B"},{"id":"56be85543aeaaa14008c9065","uncompressed_prompt":"What areas did Beyonce compete in when she was growing up?","compressed_prompt":"<s> What areas did Beyonce comp when growing","compressed_output":"Is,","uncompressed_output":"When Beyoncé was growing up, she competed in dance and singing competitions. She was a member of"},{"id":"56be85543aeaaa14008c9066","uncompressed_prompt":"When did Beyonce leave Destiny's Child and become a solo singer?","compressed_prompt":"When did Beyonce leave Dest Child become solo singer","compressed_output":"Beyonce,","uncompressed_output":"Beyoncé left Destiny's Child in 2000, but the group officially disbanded in"},{"id":"56bf6b0f3aeaaa14008c9601","uncompressed_prompt":"In what city and state did Beyonce  grow up? ","compressed_prompt":"<s> In city state did Beyonce grow","compressed_output":"Beyoncé,","uncompressed_output":"Beyoncé grew up in Houston, Texas."},{"id":"56bf6b0f3aeaaa14008c9602","uncompressed_prompt":"In which decade did Beyonce become famous?","compressed_prompt":"de did Beyonce become famous","compressed_output":"Beyonce,","uncompressed_output":"Beyoncé rose to fame in the late 1990s and early 2000s,"},{"id":"56bf6b0f3aeaaa14008c9603","uncompressed_prompt":"In what R&B group was she the lead singer?","compressed_prompt":"<s> In R group she lead singer","compressed_output":"","uncompressed_output":"I need more information about the R&B group and the lead singer you are referring to. Can you"},{"id":"56bf6b0f3aeaaa14008c9604","uncompressed_prompt":"What album made her a worldwide known artist?","compressed_prompt":"album made worldwide known artist","compressed_output":"L.","uncompressed_output":"I'm not sure which artist you are referring to. Could you please provide more context or information about"},{"id":"56bf6b0f3aeaaa14008c9605","uncompressed_prompt":"Who managed the Destiny's Child group?","compressed_prompt":"<s> Who managed Dest Child group","compressed_output":"Dest,              ,,","uncompressed_output":"Destiny's Child was managed by Mathew Knowles, the father of Beyoncé."},{"id":"56d43c5f2ccc5a1400d830a9","uncompressed_prompt":"When did Beyoncé rise to fame?","compressed_prompt":"When did Beyc\u00e9 rise fame","compressed_output":"Is,","uncompressed_output":"Beyoncé rose to fame in the late 1990s as the lead singer of the R"},{"id":"56d43c5f2ccc5a1400d830aa","uncompressed_prompt":"What role did Beyoncé have in Destiny's Child?","compressed_prompt":"<s> What role did Beyc\u00e9 Destiny Child","compressed_output":"Beyoncé,","uncompressed_output":"Beyoncé was the lead singer and a founding member of the R&B girl group Destiny's Child"},{"id":"56d43c5f2ccc5a1400d830ab","uncompressed_prompt":"What was the first album Beyoncé released as a solo artist?","compressed_prompt":"<s> What first album Beyc\u00e9 released solo artist","compressed_output":"Cé,","uncompressed_output":"The first album Beyoncé released as a solo artist was \"Dangerously in Love,\" which came out"},{"id":"56d43c5f2ccc5a1400d830ac","uncompressed_prompt":"When did Beyoncé release Dangerously in Love?","compressed_prompt":"When did Bey release Dously Love","compressed_output":"Dolly (","uncompressed_output":"Beyoncé released her debut solo album \"Dangerously in Love\" on June 23,"},{"id":"56d43c5f2ccc5a1400d830ad","uncompressed_prompt":"How many Grammy awards did Beyoncé win for her first solo album?","compressed_prompt":"How many Gram awards did Bey win first solo album","compressed_output":"Beyon,","uncompressed_output":"Beyoncé's first solo album was 'Dangerously in Love' released in 2003."},{"id":"56d43ce42ccc5a1400d830b4","uncompressed_prompt":"What was Beyoncé's role in Destiny's Child?","compressed_prompt":"<s> What was Beyc\u00e9 role Destiny Child","compressed_output":"M.","uncompressed_output":"Beyoncé was the lead singer and a founding member of the R&B girl group Destiny's Child"},{"id":"56d43ce42ccc5a1400d830b5","uncompressed_prompt":"What was the name of Beyoncé's first solo album?","compressed_prompt":"<s> What was name Beyc\u00e9 first solo album","compressed_output":"Beyoncé,,","uncompressed_output":"Beyoncé's first solo album was \"Dangerously in Love,\" released in 2003."},{"id":"56be86cf3aeaaa14008c9076","uncompressed_prompt":"After her second solo album, what other entertainment venture did Beyonce explore?","compressed_prompt":"After second solo album other entertain vent did Bey explore","compressed_output":"","uncompressed_output":"After her second solo album, \"B'Day\" (2006), Beyoncé explored acting in"},{"id":"56be86cf3aeaaa14008c9078","uncompressed_prompt":"Which artist did Beyonce marry?","compressed_prompt":"artist did Bey marry","compressed_output":"Cassady,","uncompressed_output":"Beyoncé married Shawn Corey Carter, also known as Jay-Z."},{"id":"56be86cf3aeaaa14008c9079","uncompressed_prompt":"To set the record for Grammys, how many did Beyonce win?","compressed_prompt":"<s> set record Gramm many did Beyonce win","compressed_output":"Wyn,    ,,,,, ,,,","uncompressed_output":"Beyoncé has won 32 Grammy Awards."},{"id":"56bf6e823aeaaa14008c9627","uncompressed_prompt":"For what movie did Beyonce receive  her first Golden Globe nomination?","compressed_prompt":"<s> movie did Beyonce receive first Golden Glo nom","compressed_output":"Beyonce,","uncompressed_output":"Beyoncé received her first Golden Globe nomination for the movie \"Dreamgirls\" in 2007"},{"id":"56bf6e823aeaaa14008c9629","uncompressed_prompt":"When did Beyonce take a hiatus in her career and take control of her management?","compressed_prompt":"<s> When did Beyonce take hi career take control management","compressed_output":"Is,","uncompressed_output":"Beyoncé took a hiatus in 2011, after the \"I Am... World Tour.\""},{"id":"56bf6e823aeaaa14008c962a","uncompressed_prompt":"Which album was darker in tone from her previous work?","compressed_prompt":"<s> Which album dark tone previous work","compressed_output":"","uncompressed_output":"I'm assuming you're referring to a female artist. Could you please provide more context or information about"},{"id":"56bf6e823aeaaa14008c962b","uncompressed_prompt":"After what movie portraying Etta James, did Beyonce create Sasha Fierce?","compressed_prompt":"<s> After movie portraytta James did Beyonce createasha","compressed_output":"Is,","uncompressed_output":"Beyoncé created the Sasha Fierce persona after the movie \"Cadillac Records\" (2008"},{"id":"56d43da72ccc5a1400d830bd","uncompressed_prompt":"When did Destiny's Child end their group act?","compressed_prompt":"When did Dest Child end group act","compressed_output":"Dest (","uncompressed_output":"Destiny's Child officially disbanded in 2005."},{"id":"56d43da72ccc5a1400d830be","uncompressed_prompt":"What was the name of Beyoncé's second solo album?","compressed_prompt":"<s> What was name Beyc\u00e9 second solo album","compressed_output":"Beyoncé,,","uncompressed_output":"Beyoncé's second solo album was \"B'Day\"."},{"id":"56d43da72ccc5a1400d830bf","uncompressed_prompt":"What was Beyoncé's first acting job, in 2006?","compressed_prompt":"<s> What was Beyonc\u00e9 first acting job6?","compressed_output":"Beyoncé,","uncompressed_output":"Beyoncé's first acting job was in the 2006 film \"Dreamgirls.\""},{"id":"56d43da72ccc5a1400d830c0","uncompressed_prompt":"Who is Beyoncé married to?","compressed_prompt":"<s> Who Beyc\u00e9 married","compressed_output":"Is,               ,,","uncompressed_output":"Beyoncé is married to Shawn Corey Carter, also known as Jay-Z."},{"id":"56d43da72ccc5a1400d830c1","uncompressed_prompt":"What is the name of Beyoncé's alter-ego?","compressed_prompt":"<s> What name Beyonc\u00e9 alterego?","compressed_output":"Is,","uncompressed_output":"Beyoncé's alter-ego is Sasha Fierce."},{"id":"56be88473aeaaa14008c9080","uncompressed_prompt":"In her music, what are some recurring elements in them?","compressed_prompt":"<s> In her music some recurr elements them","compressed_output":"In (","uncompressed_output":"Taylor Swift is known for several recurring elements in her music. Some of these include:\n\n1. Story"},{"id":"56be88473aeaaa14008c9083","uncompressed_prompt":"Time magazine named her one of the most 100 what people of the century?","compressed_prompt":"<s> Time magazine named her one most what people century?","compressed_output":"1,","uncompressed_output":"Time magazine named her one of the 100 most influential people of the 20th century."},{"id":"56be88473aeaaa14008c9084","uncompressed_prompt":"Which magazine declared her the most dominant woman musician?","compressed_prompt":"Which magazine declared most dominant woman music","compressed_output":"Roll.","uncompressed_output":"I'm not aware of the specific magazine that declared her the most dominant woman musician. However, I"},{"id":"56bf725c3aeaaa14008c9643","uncompressed_prompt":"In which decade did the Recording Industry Association of America recognize Beyonce as the The Top Certified Artist?","compressed_prompt":"<s> decade did Recording Indust Association America recognize Beyonce Top Cert Art","compressed_output":"","uncompressed_output":"I couldn't find any information that the Recording Industry Association of America (RIAA) recognized Beyoncé"},{"id":"56bf725c3aeaaa14008c9644","uncompressed_prompt":"What magazine rated Beyonce as the most powerful female musician in 2015?","compressed_prompt":"<s> What magazine rated Beyonce most powerful female musician","compressed_output":"Roll","uncompressed_output":"Forbes magazine rated Beyoncé as the most powerful female musician in 2015."},{"id":"56bf725c3aeaaa14008c9645","uncompressed_prompt":"How did Beyonce describe herself as a feminist?","compressed_prompt":"How did Beyonce describe herself femin","compressed_output":"Is,   ,,,,,,,,,,,","uncompressed_output":"Beyoncé described herself as a \"feminist\" in her 2013 interview with ABC"},{"id":"56bf725c3aeaaa14008c9646","uncompressed_prompt":"In which years did Time rate Beyonce in the 100 most influential people in the world?","compressed_prompt":"<s> In years did Time rate Beyonce most influential people world","compressed_output":"Beyonce,","uncompressed_output":"Beyoncé was named one of Time's 100 most influential people in the world in 201"},{"id":"56bf725c3aeaaa14008c9647","uncompressed_prompt":"How many records has Beyonce sold in her 19 year career?","compressed_prompt":"<s> How many records Beyonce sold year career","compressed_output":"Beyonce,","uncompressed_output":"Beyoncé has sold over 118 million records worldwide in her 28-year career, not"},{"id":"56d43f7e2ccc5a1400d830c7","uncompressed_prompt":"How many records did Beyoncé sell as part of Destiny's Child?","compressed_prompt":"<s> How many records did Beyc\u00e9 sell Dest Child","compressed_output":"Beyoncé,","uncompressed_output":"As part of Destiny's Child, Beyoncé sold over 65 million records worldwide."},{"id":"56d43f7e2ccc5a1400d830c8","uncompressed_prompt":"After leaving Destiny's Child, how many records did Beyoncé release under her own name?","compressed_prompt":"<s> After leaving Dest Child many records did Beyc\u00e9 release under own","compressed_output":"C,","uncompressed_output":"After leaving Destiny's Child, Beyoncé released the following solo records: \n\n1. Dangerously in"},{"id":"56d43f7e2ccc5a1400d830c9","uncompressed_prompt":"How many Grammy awards has Beyoncé won?","compressed_prompt":"How many Gram awards Beyc\u00e9 won","compressed_output":"Beyoncé,","uncompressed_output":"Beyoncé has won 32 Grammy Awards."},{"id":"56d43f7e2ccc5a1400d830cb","uncompressed_prompt":"What magazine named Beyoncé as the most powerful female musician for 2015?","compressed_prompt":"<s> What magazine named Beyonc\u00e9 most powerful female musician","compressed_output":"Is,               ,","uncompressed_output":"Forbes magazine named Beyoncé as the most powerful female musician for 2015."},{"id":"56be892d3aeaaa14008c908b","uncompressed_prompt":"Beyonce's younger sibling also sang with her in what band?","compressed_prompt":"<s> Beyonce younger sib also sang her band","compressed_output":"Is,","uncompressed_output":"Solange Knowles, Beyoncé's younger sister, sang with her in the band Destiny's Child"},{"id":"56be892d3aeaaa14008c908c","uncompressed_prompt":"Where did Beyonce get her name from?","compressed_prompt":"<s> Where did Beyonce get","compressed_output":"Beyonce,","uncompressed_output":"Beyoncé's first name is derived from her mother's maiden name, Beyincé. Her"},{"id":"56be892d3aeaaa14008c908d","uncompressed_prompt":"What race was Beyonce's father?","compressed_prompt":"<s> What race Beyonce father","compressed_output":"Beyonce,","uncompressed_output":"Beyoncé's father, Mathew Knowles, is African American."},{"id":"56be892d3aeaaa14008c908e","uncompressed_prompt":"Beyonce's childhood home believed in what religion?","compressed_prompt":"<s> Beyonce child home believed religion","compressed_output":"Beyonce,","uncompressed_output":"Beyoncé's childhood home in Houston, Texas, is believed to be a Baptist church."},{"id":"56bf74d53aeaaa14008c9659","uncompressed_prompt":"Beyonce's father worked as a sales manager for what company?","compressed_prompt":"<s> Beyonce father worked sales manager what company","compressed_output":"Is,","uncompressed_output":"Beyoncé's father, Mathew Knowles, worked as a sales manager for Xerox."},{"id":"56bf74d53aeaaa14008c965a","uncompressed_prompt":"Beyonce's mother worked in what industry?","compressed_prompt":"<s> Beyonce mother worked industry","compressed_output":"Beyonce,","uncompressed_output":"Beyoncé's mother, Tina Knowles, worked in the fashion industry."},{"id":"56bf74d53aeaaa14008c965b","uncompressed_prompt":"What younger sister of Beyonce also appeared in Destiny's Child?","compressed_prompt":"What younger sister Beyonce also appeared Dest Child","compressed_output":"Is,","uncompressed_output":"Solange Knowles is the younger sister of Beyoncé and also a former member of the R&B"},{"id":"56bf74d53aeaaa14008c965d","uncompressed_prompt":"Beyonce is a descendent of what Arcadian leader?","compressed_prompt":"<s> Beyonce descendent Arcad leader","compressed_output":"Beyonce,","uncompressed_output":"I couldn't find any information about Beyoncé being a direct descendant of an Arcadian leader."},{"id":"56d440df2ccc5a1400d830d1","uncompressed_prompt":"What company did Beyoncé's father work for when she was a child?","compressed_prompt":"<s> What company did Beyc\u00e9 father work when child","compressed_output":"Is,","uncompressed_output":"Beyoncé's father, Mathew Knowles, worked for the record label Arista Records when"},{"id":"56d440df2ccc5a1400d830d2","uncompressed_prompt":"What did Beyoncé's mother own when Beyoncé was a child?","compressed_prompt":"<s> What did Beyc\u00e9 mother own Beyc\u00e9 child","compressed_output":"Is,","uncompressed_output":"When Beyoncé was a child, her mother, Tina Knowles, owned a hair salon in Houston"},{"id":"56d440df2ccc5a1400d830d3","uncompressed_prompt":"What is the name of Beyoncé's younger sister?","compressed_prompt":"<s> What name Beyonc\u00e9 younger sister","compressed_output":"Is,","uncompressed_output":"Solange Knowles is Beyoncé's younger sister."}];
+
+  function escape(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  // Check if compressed output roughly starts with same word as uncompressed
+  function outputMatch(u, c) {
+    const uw = u.trim().split(/\s+/)[0].toLowerCase().replace(/[^a-z]/g,'');
+    const cw = c.trim().split(/[\s,]/)[0].toLowerCase().replace(/[^a-z]/g,'');
+    return uw.length > 0 && cw.length > 0 && uw.startsWith(cw.slice(0,3));
+  }
+
+  data.forEach((row, i) => {
+    const match = outputMatch(row.uncompressed_output, row.compressed_output);
+    const badge = row.compressed_output.trim() === ''
+      ? '<span class="badge">empty</span>'
+      : match ? '<span class="badge match">~match</span>' : '<span class="badge diff">diff</span>';
+
+    document.write(`
+      <div class="row" style="display:contents">
+        <div class="cell num">${i+1}</div>
+        <div class="cell uncompressed">${escape(row.uncompressed_prompt)}</div>
+        <div class="cell compressed">${escape(row.compressed_prompt)}</div>
+        <div class="cell output-u">${escape(row.uncompressed_output)}</div>
+        <div class="cell output-c ${match ? '' : 'mismatch'}">${escape(row.compressed_output)}${badge}</div>
+      </div>
+    `);
+  });
+  </script>
+</div>
+</body>
+</html>

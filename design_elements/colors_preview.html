@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Color Palette Preview</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #111;
+      color: #ccc;
+      font-family: 'Courier New', monospace;
+      padding: 48px 40px;
+      min-height: 100vh;
+    }
+
+    h1 {
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #555;
+      margin-bottom: 56px;
+    }
+
+    .palette {
+      margin-bottom: 64px;
+    }
+
+    .palette-header {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .palette-name {
+      font-size: 13px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #eee;
+    }
+
+    .palette-desc {
+      font-size: 11px;
+      color: #555;
+      letter-spacing: 0.05em;
+    }
+
+    .swatches {
+      display: flex;
+      gap: 0;
+      height: 80px;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .swatch {
+      flex: 1;
+      position: relative;
+      cursor: default;
+    }
+
+    .swatch-label {
+      position: absolute;
+      bottom: 8px;
+      left: 10px;
+      right: 10px;
+      font-size: 9px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      line-height: 1.5;
+    }
+
+    .swatch-role {
+      display: block;
+      opacity: 0.6;
+      margin-bottom: 1px;
+    }
+
+    .swatch-hex {
+      display: block;
+      font-weight: bold;
+      opacity: 0.9;
+    }
+
+    .palette-rule {
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      color: #444;
+      text-transform: uppercase;
+      padding-top: 12px;
+      border-top: 1px solid #222;
+    }
+
+    /* Palette A */
+    .a-bg   { background: #080808; }
+    .a-surf { background: #131313; }
+    .a-text { background: #E8E3D8; }
+    .a-acc  { background: #B81C1C; }
+    .a-sec  { background: #2E2E2E; }
+
+    /* Palette B */
+    .b-bg   { background: #0D0C0A; }
+    .b-surf { background: #1A1815; }
+    .b-text { background: #F0EAD6; }
+    .b-acc  { background: #A07840; }
+    .b-sec  { background: #2C2A26; }
+
+    /* Palette C */
+    .c-bg   { background: #080A0F; }
+    .c-surf { background: #10131A; }
+    .c-text { background: #D8DDE8; }
+    .c-acc  { background: #4A6A7C; }
+    .c-sec  { background: #1C2030; }
+
+    /* label color contrast helpers */
+    .dark-label  { color: #888; }
+    .light-label { color: #333; }
+
+    /* Full mockup strip */
+    .mockup {
+      height: 100px;
+      border-radius: 4px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      padding: 0 28px;
+      gap: 20px;
+      margin-top: 16px;
+      margin-bottom: 8px;
+    }
+
+    .mockup-title {
+      font-size: 22px;
+      letter-spacing: -0.01em;
+      font-weight: 700;
+    }
+
+    .mockup-sub {
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      opacity: 0.5;
+      text-transform: uppercase;
+    }
+
+    .mockup-btn {
+      margin-left: auto;
+      padding: 8px 18px;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      border: 1px solid;
+      border-radius: 2px;
+      font-family: 'Courier New', monospace;
+    }
+
+    /* A mockup */
+    .mockup-a {
+      background: #080808;
+      color: #E8E3D8;
+    }
+    .mockup-a .mockup-btn {
+      color: #B81C1C;
+      border-color: #B81C1C;
+    }
+
+    /* B mockup */
+    .mockup-b {
+      background: #0D0C0A;
+      color: #F0EAD6;
+    }
+    .mockup-b .mockup-btn {
+      color: #A07840;
+      border-color: #A07840;
+    }
+
+    /* C mockup */
+    .mockup-c {
+      background: #080A0F;
+      color: #D8DDE8;
+    }
+    .mockup-c .mockup-btn {
+      color: #4A6A7C;
+      border-color: #4A6A7C;
+    }
+
+    .mockup-label {
+      font-size: 9px;
+      color: #333;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Portfolio — Color Palette Options</h1>
+
+  <!-- PALETTE A -->
+  <div class="palette">
+    <div class="palette-header">
+      <span class="palette-name">A — Undercover Black</span>
+      <span class="palette-desc">Pitch black · warm paper white · blood red</span>
+    </div>
+
+    <div class="swatches">
+      <div class="swatch a-bg">
+        <div class="swatch-label dark-label">
+          <span class="swatch-role">Background</span>
+          <span class="swatch-hex">#080808</span>
+        </div>
+      </div>
+      <div class="swatch a-surf">
+        <div class="swatch-label dark-label">
+          <span class="swatch-role">Surface</span>
+          <span class="swatch-hex">#131313</span>
+        </div>
+      </div>
+      <div class="swatch a-sec">
+        <div class="swatch-label dark-label">
+          <span class="swatch-role">Secondary</span>
+          <span class="swatch-hex">#2E2E2E</span>
+        </div>
+      </div>
+      <div class="swatch a-acc">
+        <div class="swatch-label dark-label">
+          <span class="swatch-role">Accent</span>
+          <span class="swatch-hex">#B81C1C</span>
+        </div>
+      </div>
+      <div class="swatch a-text">
+        <div class="swatch-label light-label">
+          <span class="swatch-role">Text</span>
+          <span class="swatch-hex">#E8E3D8</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mockup-label">Context mockup</div>
+    <div class="mockup mockup-a">
+      <div>
+        <div class="mockup-title">Preston Rank</div>
+        <div class="mockup-sub">Solutions Engineer</div>
+      </div>
+      <div class="mockup-btn">View Work</div>
+    </div>
+
+    <div class="palette-rule">Palette rule — monochrome black with one red cut-through. Nothing else.</div>
+  </div>
+
+  <!-- PALETTE B -->
+  <div class="palette">
+    <div class="palette-header">
+      <span class="palette-name">B — Archive Editorial</span>
+      <span class="palette-desc">Warm charcoal · parchment cream · muted amber</span>
+    </div>
+
+    <div class="swatches">
+      <div class="swatch b-bg">
+        <div class="swatch-label dark-label">
+          <span class="swatch-role">Background</span>
+          <span class="swatch-hex">#0D0C0A</span>
+        </div>
+      </div>
+      <div class="swatch b-surf">
+        <div class="swatch-label dark-label">
+          <span class="swatch-role">Surface</span>
+          <span class="swatch-hex">#1A1815</span>
+        </div>
+      </div>
+      <div class="swatch b-sec">
+        <div class="swatch-label dark-label">
+          <span class="swatch-role">Secondary</span>
+          <span class="swatch-hex">#2C2A26</span>
+        </div>
+      </div>
+      <div class="swatch b-acc">
+        <div class="swatch-label dark-label">
+          <span class="swatch-role">Accent</span>
+          <span class="swatch-hex">#A07840</span>
+        </div>
+      </div>
+      <div class="swatch b-text">
+        <div class="swatch-label light-label">
+          <span class="swatch-role">Text</span>
+          <span class="swatch-hex">#F0EAD6</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mockup-label">Context mockup</div>
+    <div class="mockup mockup-b">
+      <div>
+        <div class="mockup-title">Preston Rank</div>
+        <div class="mockup-sub">Solutions Engineer</div>
+      </div>
+      <div class="mockup-btn">View Work</div>
+    </div>
+
+    <div class="palette-rule">Palette rule — warm neutrals only. No cool grays, no pure black.</div>
+  </div>
+
+  <!-- PALETTE C -->
+  <div class="palette">
+    <div class="palette-header">
+      <span class="palette-name">C — Cold Void</span>
+      <span class="palette-desc">Cold obsidian · icy off-white · muted steel blue</span>
+    </div>
+
+    <div class="swatches">
+      <div class="swatch c-bg">
+        <div class="swatch-label dark-label">
+          <span class="swatch-role">Background</span>
+          <span class="swatch-hex">#080A0F</span>
+        </div>
+      </div>
+      <div class="swatch c-surf">
+        <div class="swatch-label dark-label">
+          <span class="swatch-role">Surface</span>
+          <span class="swatch-hex">#10131A</span>
+        </div>
+      </div>
+      <div class="swatch c-sec">
+        <div class="swatch-label dark-label">
+          <span class="swatch-role">Secondary</span>
+          <span class="swatch-hex">#1C2030</span>
+        </div>
+      </div>
+      <div class="swatch c-acc">
+        <div class="swatch-label dark-label">
+          <span class="swatch-role">Accent</span>
+          <span class="swatch-hex">#4A6A7C</span>
+        </div>
+      </div>
+      <div class="swatch c-text">
+        <div class="swatch-label light-label">
+          <span class="swatch-role">Text</span>
+          <span class="swatch-hex">#D8DDE8</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mockup-label">Context mockup</div>
+    <div class="mockup mockup-c">
+      <div>
+        <div class="mockup-title">Preston Rank</div>
+        <div class="mockup-sub">Solutions Engineer</div>
+      </div>
+      <div class="mockup-btn">View Work</div>
+    </div>
+
+    <div class="palette-rule">Palette rule — cold monochrome with one muted steel accent. No warmth anywhere.</div>
+  </div>
+
+</body>
+</html>

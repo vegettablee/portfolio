@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Bubble Glyph Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Fira+Code:wght@300;400&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: #E8E9EA;
+    color: #0A0B0D;
+    font-family: 'DM Sans', sans-serif; font-weight: 300;
+    min-height: 100vh;
+  }
+  body {
+    padding: 56px 40px 80px;
+    background:
+      radial-gradient(circle at 22% 30%, rgba(43,182,224,0.35), transparent 55%),
+      radial-gradient(circle at 78% 70%, rgba(180,224,74,0.30), transparent 55%),
+      #E8E9EA;
+  }
+  body::after {
+    content:''; position: fixed; inset: 0; pointer-events: none; z-index: 100;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' seed='7'/><feColorMatrix values='0 0 0 0 0.04   0 0 0 0 0.04   0 0 0 0 0.05   0 0 0 0.55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    opacity: 0.28; mix-blend-mode: multiply;
+  }
+
+  h1 { font-family: 'Cormorant Garamond', serif; font-weight: 300; font-style: italic; font-size: 36px; margin-bottom: 6px; }
+  .sub { font-family: 'Fira Code', monospace; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(10,11,13,0.55); margin-bottom: 56px; }
+
+  .row {
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 36px;
+    margin-bottom: 56px; align-items: center; justify-items: center;
+  }
+  .cell { display: flex; flex-direction: column; align-items: center; gap: 14px; position: relative; z-index: 2; }
+  .cap {
+    font-family: 'Fira Code', monospace; font-size: 9px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: rgba(10,11,13,0.55); text-align: center;
+  }
+  .label {
+    font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 18px;
+    color: #0A0B0D;
+  }
+
+  /* === BUBBLE BASE === */
+  .bubble {
+    width: 132px; height: 132px;
+    border-radius: 50%;
+    position: relative;
+    display: grid; place-items: center;
+    background: radial-gradient(circle at 30% 28%,
+      rgba(255,255,255,0.90) 0%,
+      rgba(255,255,255,0.18) 18%,
+      rgba(110,231,231,0.32) 40%,
+      rgba(43,182,224,0.22) 70%,
+      rgba(43,182,224,0.05) 100%);
+    box-shadow:
+      inset -10px -14px 32px rgba(43,90,140,0.18),
+      0 12px 26px rgba(43,182,224,0.22);
+  }
+  /* secondary highlight (small, opposite side) */
+  .bubble.refract::before {
+    content:''; position: absolute;
+    bottom: 14%; right: 18%;
+    width: 22%; height: 22%; border-radius: 50%;
+    background: radial-gradient(circle at 40% 40%, rgba(255,255,255,0.55), transparent 70%);
+    filter: blur(2px);
+  }
+  /* meniscus / inner rim */
+  .bubble.meniscus::after {
+    content:''; position: absolute; inset: 6%;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.42);
+  }
+
+  /* LIME variant */
+  .bubble.lime {
+    background: radial-gradient(circle at 30% 28%,
+      rgba(255,255,255,0.90) 0%,
+      rgba(255,255,255,0.18) 18%,
+      rgba(180,224,74,0.32) 40%,
+      rgba(63,203,126,0.22) 70%,
+      rgba(63,203,126,0.05) 100%);
+    box-shadow:
+      inset -10px -14px 32px rgba(50,120,70,0.18),
+      0 12px 26px rgba(63,203,126,0.22);
+  }
+
+  /* === GLYPH STYLES === */
+  .glyph {
+    position: relative; z-index: 2;
+    color: rgba(10,11,13,0.80);
+    text-shadow: 0 1px 0 rgba(255,255,255,0.4);
+  }
+  .glyph.mono   { font-family: 'Fira Code', monospace; font-size: 38px; font-weight: 400; letter-spacing: 0.04em; }
+  .glyph.serif  { font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 300; font-size: 56px; }
+  .glyph.tiny   { font-family: 'Fira Code', monospace; font-size: 11px; letter-spacing: 0.22em; color: rgba(10,11,13,0.55); }
+  .glyph.big    { font-family: 'Fira Code', monospace; font-size: 64px; font-weight: 300; color: rgba(10,11,13,0.85); }
+  .glyph.curve  { width: 100%; height: 100%; position: absolute; inset: 0; }
+
+  /* === SECONDARY: ball-shaped solid inside bubble === */
+  .inset-orb {
+    width: 50%; aspect-ratio: 1; border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #2a2d34 0%, #0a0a0a 70%);
+    box-shadow: inset -6px -8px 16px rgba(0,0,0,0.45), 0 4px 8px rgba(0,0,0,0.25);
+    display: grid; place-items: center; position: relative; z-index: 2;
+  }
+  .inset-orb span {
+    width: 50%; aspect-ratio: 1; border-radius: 50%; background: #FAF7EE;
+    display: grid; place-items: center; font-family: 'Fira Code', monospace;
+    color: #0a0a0a; font-size: 14px;
+  }
+
+  /* === Mini guruguru === */
+  .mini-guru {
+    position: relative; z-index: 2; width: 60%; aspect-ratio: 1;
+    animation: spin 18s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* === A1 override — bolder outline test === */
+  .bubble.bold {
+    box-shadow:
+      0 0 0 0.5px rgba(10,11,13,0.28),                /* thin outer rim, softer */
+      inset 0 0 0 0.5px rgba(10,11,13,0.10),          /* faint inner edge */
+      inset -10px -14px 32px rgba(43,90,140,0.22),    /* shaded underbelly */
+      0 12px 26px rgba(43,182,224,0.22);              /* aqua ground glow */
+  }
+
+</style>
+</head>
+<body>
+
+<h1>Bubble × glyph — study</h1>
+<div class="sub">132px bubbles · same base · different interior contents</div>
+
+<!-- Row A: single Fira Code character, varying weights/sizes -->
+<div class="row">
+  <div class="cell">
+    <div class="bubble bold"><span class="glyph mono">8</span></div>
+    <div class="cap">A1 — Mono "8" · bolder outline</div>
+  </div>
+  <div class="cell">
+    <div class="bubble"><span class="glyph mono">θ</span></div>
+    <div class="cap">A2 — θ</div>
+  </div>
+  <div class="cell">
+    <div class="bubble"><span class="glyph mono">∮</span></div>
+    <div class="cap">A3 — ∮</div>
+  </div>
+  <div class="cell">
+    <div class="bubble"><span class="glyph mono">※</span></div>
+    <div class="cap">A4 — ※</div>
+  </div>
+  <div class="cell">
+    <div class="bubble"><span class="glyph mono">∴</span></div>
+    <div class="cap">A5 — ∴</div>
+  </div>
+  <div class="cell">
+    <div class="bubble"><span class="glyph mono">⌗</span></div>
+    <div class="cap">A6 — ⌗</div>
+  </div>
+</div>
+
+<!-- Row B: serif italic — Cormorant -->
+<div class="row">
+  <div class="cell">
+    <div class="bubble lime refract"><span class="glyph serif">P</span></div>
+    <div class="cap">B1 — Cormorant "P"</div>
+  </div>
+  <div class="cell">
+    <div class="bubble refract"><span class="glyph serif">R</span></div>
+    <div class="cap">B2 — Cormorant "R"</div>
+  </div>
+  <div class="cell">
+    <div class="bubble lime refract"><span class="glyph serif">8</span></div>
+    <div class="cap">B3 — Serif "8"</div>
+  </div>
+  <div class="cell">
+    <div class="bubble refract meniscus"><span class="glyph big">8</span></div>
+    <div class="cap">B4 — Big mono "8"</div>
+  </div>
+  <div class="cell">
+    <div class="bubble lime"><span class="glyph mono">∇</span></div>
+    <div class="cap">B5 — ∇</div>
+  </div>
+  <div class="cell">
+    <div class="bubble"><span class="glyph mono">⊙</span></div>
+    <div class="cap">B6 — ⊙</div>
+  </div>
+</div>
+
+<!-- Row C: 2-digit numbers and short codes -->
+<div class="row">
+  <div class="cell">
+    <div class="bubble refract"><span class="glyph mono">03</span></div>
+    <div class="cap">C1 — "03"</div>
+  </div>
+  <div class="cell">
+    <div class="bubble lime refract"><span class="glyph mono">14</span></div>
+    <div class="cap">C2 — "14"</div>
+  </div>
+  <div class="cell">
+    <div class="bubble refract meniscus"><span class="glyph tiny">NODE_03</span></div>
+    <div class="cap">C3 — Tiny code</div>
+  </div>
+  <div class="cell">
+    <div class="bubble lime refract">
+      <svg class="glyph curve" viewBox="0 0 100 100">
+        <defs><path id="ringtxt" d="M50,50 m-32,0 a32,32 0 1,1 64,0 a32,32 0 1,1 -64,0"/></defs>
+        <text font-family="Fira Code" font-size="7" fill="rgba(10,11,13,0.7)" letter-spacing="2">
+          <textPath href="#ringtxt">SOLUTIONS · ENGINEER ·</textPath>
+        </text>
+      </svg>
+    </div>
+    <div class="cap">C4 — Curved text</div>
+  </div>
+  <div class="cell">
+    <div class="bubble refract">
+      <div class="inset-orb"><span>8</span></div>
+    </div>
+    <div class="cap">C5 — Bubble holds 8-ball</div>
+  </div>
+  <div class="cell">
+    <div class="bubble lime refract">
+      <svg class="mini-guru" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="34" fill="none" stroke="#0A0B0D" stroke-width="0.8" opacity="0.5"/>
+        <circle cx="50" cy="50" r="26" fill="none" stroke="#0A0B0D" stroke-width="0.6" opacity="0.35" stroke-dasharray="2 4"/>
+        <circle cx="50" cy="50" r="18" fill="none" stroke="#0A0B0D" stroke-width="0.5" opacity="0.25"/>
+        <circle cx="84" cy="50" r="1.8" fill="#0A0B0D"/>
+        <circle cx="78" cy="22" r="1.4" fill="#0A0B0D"/>
+        <circle cx="78" cy="78" r="1.4" fill="#0A0B0D"/>
+      </svg>
+    </div>
+    <div class="cap">C6 — Mini guruguru</div>
+  </div>
+</div>
+
+<!-- Row D: scale study — how it looks small (real composition size) -->
+<div class="row" style="grid-template-columns: repeat(8, 1fr); gap: 24px;">
+  <div class="cell"><div class="bubble" style="width:64px; height:64px;"><span class="glyph mono" style="font-size:18px;">8</span></div><div class="cap">64px</div></div>
+  <div class="cell"><div class="bubble lime" style="width:64px; height:64px;"><span class="glyph mono" style="font-size:18px;">θ</span></div><div class="cap">64px</div></div>
+  <div class="cell"><div class="bubble" style="width:64px; height:64px;"><span class="glyph mono" style="font-size:14px;">03</span></div><div class="cap">64px</div></div>
+  <div class="cell"><div class="bubble lime" style="width:48px; height:48px;"><span class="glyph mono" style="font-size:14px;">∮</span></div><div class="cap">48px</div></div>
+  <div class="cell"><div class="bubble" style="width:48px; height:48px;"><span class="glyph mono" style="font-size:14px;">※</span></div><div class="cap">48px</div></div>
+  <div class="cell"><div class="bubble lime" style="width:36px; height:36px;"><span class="glyph mono" style="font-size:10px;">∴</span></div><div class="cap">36px</div></div>
+  <div class="cell"><div class="bubble" style="width:36px; height:36px;"><span class="glyph mono" style="font-size:10px;">⌗</span></div><div class="cap">36px</div></div>
+  <div class="cell"><div class="bubble lime" style="width:28px; height:28px;"><span class="glyph mono" style="font-size:8px;">8</span></div><div class="cap">28px</div></div>
+</div>
+
+</body>
+</html>

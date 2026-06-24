@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Backgrounds v5 — PC3 Aged</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=EB+Garamond:ital,wght@0,400;1,400;1,500&family=Fira+Code:wght@300;400&family=IBM+Plex+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0A0B0D;
+    --ink-soft: rgba(10,11,13,0.62);
+    --ink-faint: rgba(10,11,13,0.22);
+    --accent-slate: #4A6A7C;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #111; color: var(--ink); font-family: 'Fira Code', monospace; font-weight: 300; }
+  body { padding: 48px 32px 80px; }
+  h1 { font-family: 'Cormorant Garamond', serif; font-weight: 300; font-style: italic; font-size: 42px; color: #EDECE6; margin-bottom: 8px; }
+  .sub { font-family: 'Fira Code', monospace; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: #888; margin-bottom: 32px; }
+  .section-h {
+    font-family: 'Fira Code', monospace; font-size: 11px; letter-spacing: 0.22em;
+    text-transform: uppercase; color: #d4d2cc; margin: 40px 0 16px;
+    border-bottom: 1px solid #333; padding-bottom: 8px;
+  }
+
+  .grid { display: grid; grid-template-columns: 1fr; gap: 32px; }
+  .tile { position: relative; aspect-ratio: 16/10; overflow: hidden; border: 1px solid #2a2a2a; color: var(--ink); }
+  .tile .label {
+    position: absolute; top: 14px; left: 16px; z-index: 70;
+    font-family: 'Fira Code', monospace; font-size: 9.5px; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--ink);
+    background: rgba(255,255,255,0.55); padding: 4px 8px; backdrop-filter: blur(4px);
+  }
+  .tile .name {
+    position: absolute; bottom: 16px; left: 16px; z-index: 70;
+    font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 300;
+    font-size: 22px; color: var(--ink);
+  }
+  .tile .desc {
+    position: absolute; bottom: 16px; right: 16px; z-index: 70; max-width: 48%;
+    font-family: 'Fira Code', monospace; font-size: 10.5px; line-height: 1.55;
+    color: var(--ink-soft); text-align: right;
+  }
+
+  /* === SAND/GRAIN TEXTURE LAYER === */
+  .grain::after {
+    content:''; position:absolute; inset:0; pointer-events: none; z-index: 60;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='320'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='3' seed='9'/><feColorMatrix values='0 0 0 0 0.03   0 0 0 0 0.03   0 0 0 0 0.04   0 0 0 0.58 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    opacity: 0.42; mix-blend-mode: multiply;
+  }
+  /* soft, fine grain — no cloudy mesh */
+  .grain::before {
+    content:''; position:absolute; inset:0; pointer-events: none; z-index: 2;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='280' height='280'><filter id='s'><feTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='2' seed='5'/><feColorMatrix values='0 0 0 0 0.04   0 0 0 0 0.04   0 0 0 0 0.05   0 0 0 0.32 0'/></filter><rect width='100%' height='100%' filter='url(%23s)'/></svg>");
+    opacity: 0.32; mix-blend-mode: multiply;
+  }
+
+  /* === CIRCLE RIG === */
+  .circle-rig {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60%; aspect-ratio: 1; z-index: 35;
+  }
+  .eightball-wrap {
+    position: absolute; inset: 0; margin: 14% auto auto 14%; width: 72%; height: 72%;
+    z-index: 0; pointer-events: none;
+  }
+  .eightball-img { width: 100%; height: 100%; object-fit: contain; opacity: 0.92; }
+  .circle-rig svg { width: 100%; height: 100%; overflow: visible; position: relative; z-index: 2; }
+  .ring-rig { fill: none; stroke: #0A0B0D; }
+  .rs { stroke-width: .6; opacity: .25; }
+  .rd { stroke-width: .6; opacity: .16; stroke-dasharray: 2.5 11; }
+  /* tight rings hugging the 8-ball */
+  .ring-hug { fill: none; stroke: #7a3e1c; stroke-width: .5; }
+  .arc-acc { fill: none; stroke-width: 2.2; stroke-linecap: round; opacity: 0.7; }
+  .node-dot { fill: var(--accent-slate); opacity: 0.85; }
+  .node-ring { fill: none; stroke: var(--accent-slate); stroke-width: 1; opacity: 0.45; }
+  .node-line { stroke: var(--accent-slate); stroke-width: 0.7; opacity: 0.8; }
+  .node-label { font-family: 'Fira Code', monospace; font-size: 8.5px; fill: var(--ink-soft); letter-spacing: 0.14em; text-transform: uppercase; text-anchor: middle; }
+  .c-label { font-family: 'Fira Code', monospace; font-size: 9px; fill: var(--ink-soft); text-anchor: middle; letter-spacing: 0.18em; }
+  .orbit-text { font-family: 'Fira Code', monospace; font-size: 8.5px; fill: var(--ink); opacity: 0.5; letter-spacing: 4px; }
+  .outer { transform-origin: 280px 280px; animation: spin 85s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* === AERO BUBBLES === */
+  .bubble {
+    position: absolute; border-radius: 50%; z-index: 22; pointer-events: none;
+    display: grid; place-items: center;
+    background: radial-gradient(circle at 30% 28%,
+      rgba(255,255,255,0.90) 0%,
+      rgba(255,255,255,0.18) 18%,
+      rgba(110,231,231,0.32) 40%,
+      rgba(43,182,224,0.22) 70%,
+      rgba(43,182,224,0.05) 100%);
+    box-shadow:
+      0 0 0 0.5px rgba(10,11,13,0.28),
+      inset 0 0 0 0.5px rgba(10,11,13,0.10),
+      inset -10px -14px 32px rgba(43,90,140,0.22),
+      0 12px 26px rgba(43,182,224,0.22);
+  }
+  .bubble.lime {
+    background: radial-gradient(circle at 30% 28%,
+      rgba(255,255,255,0.90) 0%,
+      rgba(255,255,255,0.18) 18%,
+      rgba(180,224,74,0.32) 40%,
+      rgba(63,203,126,0.22) 70%,
+      rgba(63,203,126,0.05) 100%);
+    box-shadow:
+      0 0 0 0.5px rgba(10,11,13,0.28),
+      inset 0 0 0 0.5px rgba(10,11,13,0.10),
+      inset -10px -14px 32px rgba(50,120,70,0.22),
+      0 12px 26px rgba(63,203,126,0.22);
+  }
+  .bubble .g {
+    position: relative; z-index: 2;
+    font-family: 'Fira Code', monospace; font-weight: 400;
+    color: rgba(10,11,13,0.82); letter-spacing: 0.04em;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.4);
+  }
+
+  /* === PARCHMENT GROUND === */
+  .pc-aged    { background: #F0E2BE; }
+
+  /* sepia ink for parchment */
+  .ink-sepia { color: rgba(80,40,12,0.78) !important; fill: rgba(80,40,12,0.78) !important; }
+
+</style>
+</head>
+<body>
+
+<h1>v5 — PC3 aged, stripped</h1>
+<div class="sub">No math · no polaroids · no field rings · tight rings hugging the orb</div>
+
+<div class="grid">
+
+  <!-- =============== PC3 AGED =============== -->
+  <div class="tile pc-aged grain">
+    <span class="label">PC3 — Aged</span>
+
+    <div class="bubble"      style="width:54px; height:54px; top:11%; left:8%;"><span class="g" style="font-size:24px;">8</span></div>
+    <div class="bubble lime" style="width:42px; height:42px; top:22%; right:22%;"><span class="g" style="font-size:18px;">8</span></div>
+    <div class="bubble"      style="width:38px; height:38px; bottom:22%; right:9%;"><span class="g" style="font-size:16px;">8</span></div>
+
+    <div class="circle-rig">
+      <div class="eightball-wrap"><img class="eightball-img" src="../../portfolio/src/8_ball_no_background.png" alt=""></div>
+      <svg viewBox="0 0 560 560">
+        <!-- tight rings hugging the 8-ball -->
+        <circle class="ring-hug" cx="280" cy="280" r="148" opacity=".55"/>
+        <circle class="ring-hug" cx="280" cy="280" r="156" opacity=".40"/>
+        <circle class="ring-hug" cx="280" cy="280" r="165" opacity=".28"/>
+        <circle class="ring-hug" cx="280" cy="280" r="175" opacity=".18"/>
+
+        <circle class="ring-rig rs" cx="280" cy="280" r="210"/>
+        <circle class="ring-rig rd" cx="280" cy="280" r="195"/>
+        <path class="arc-acc" stroke="#7a3e1c" d="M 368.7,89.7 A 210,210 0 0,1 452.0,159.6"/>
+        <path class="arc-acc" stroke="#7a3e1c" d="M 482.8,225.7 A 210,210 0 0,1 482.8,334.3"/>
+        <path class="arc-acc" stroke="#7a3e1c" d="M 452.0,400.4 A 210,210 0 0,1 368.7,470.3"/>
+        <g class="outer"><circle class="ring-rig rs" cx="280" cy="280" r="250" opacity=".22"/><defs><path id="tpc3" d="M280,280 m-238,0 a238,238 0 1,1 476,0 a238,238 0 1,1 -476,0"/></defs><text class="orbit-text" fill="#7a3e1c" opacity=".5"><textPath href="#tpc3">SO(3) · ROTATION · GENERATOR · RANK ·</textPath></text></g>
+        <text class="c-label" x="280" y="276" fill="#7a3e1c">P · RANK</text>
+        <text class="c-label" x="280" y="291" font-size="8" opacity=".6" fill="#7a3e1c">2026</text>
+        <g><circle class="node-ring" cx="414.9" cy="119.1" r="11"/><circle class="node-dot" cx="414.9" cy="119.1" r="3.5"/><line class="node-line" x1="419" y1="119.1" x2="548" y2="119.1"/><text class="node-label" x="414.9" y="107">Experience</text></g>
+        <g><circle class="node-ring" cx="490" cy="280" r="11"/><circle class="node-dot" cx="490" cy="280" r="3.5"/><line class="node-line" x1="494" y1="280" x2="548" y2="280"/><text class="node-label" x="490" y="268">Projects</text></g>
+        <g><circle class="node-ring" cx="414.9" cy="440.9" r="11"/><circle class="node-dot" cx="414.9" cy="440.9" r="3.5"/><line class="node-line" x1="419" y1="440.9" x2="548" y2="440.9"/><text class="node-label" x="414.9" y="459">About</text></g>
+      </svg>
+    </div>
+
+    <div class="name">Aged · stripped</div>
+    <div class="desc">Math, polaroids, and field rings removed. Tight rings hug the orb; orbit text and node labels remain.</div>
+  </div>
+
+</div>
+
+</body>
+</html>

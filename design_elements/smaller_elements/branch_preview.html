@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Branch — Preview</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #080A0F;
+    width: 100vw; height: 100vh;
+    overflow: hidden;
+  }
+  svg#branch {
+    position: fixed;
+    top: 0; right: 0;
+    width: 580px;
+    height: 540px;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+<svg id="branch" viewBox="0 0 580 540" xmlns="http://www.w3.org/2000/svg" fill="none">
+  <defs>
+
+    <!-- Corner fade mask -->
+    <radialGradient id="fade" cx="100%" cy="0%" r="80%" gradientUnits="objectBoundingBox">
+      <stop offset="0%"   stop-color="white" stop-opacity="1"   />
+      <stop offset="50%"  stop-color="white" stop-opacity="0.7" />
+      <stop offset="85%"  stop-color="white" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="white" stop-opacity="0"   />
+    </radialGradient>
+    <mask id="fade-mask">
+      <rect width="580" height="540" fill="url(#fade)" />
+    </mask>
+
+    <!--
+      Bark texture filter:
+      feTurbulence generates organic noise.
+      feDisplacementMap warps the branch paths along that noise field,
+      breaking up the smooth bezier into something that reads as wood grain.
+    -->
+    <filter id="bark" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
+      <feTurbulence
+        type="fractalNoise"
+        baseFrequency="0.018 0.065"
+        numOctaves="5"
+        seed="42"
+        result="noise" />
+      <feDisplacementMap
+        in="SourceGraphic"
+        in2="noise"
+        scale="7"
+        xChannelSelector="R"
+        yChannelSelector="G"
+        result="warped" />
+      <!-- Subtle roughness pass on top -->
+      <feTurbulence
+        type="turbulence"
+        baseFrequency="0.06 0.12"
+        numOctaves="3"
+        seed="17"
+        result="rough" />
+      <feDisplacementMap
+        in="warped"
+        in2="rough"
+        scale="3"
+        xChannelSelector="G"
+        yChannelSelector="R" />
+    </filter>
+
+    <!-- Lighter roughness filter for thinner branches -->
+    <filter id="bark-thin" x="-15%" y="-15%" width="130%" height="130%" color-interpolation-filters="sRGB">
+      <feTurbulence
+        type="fractalNoise"
+        baseFrequency="0.025 0.09"
+        numOctaves="4"
+        seed="7"
+        result="noise" />
+      <feDisplacementMap
+        in="SourceGraphic"
+        in2="noise"
+        scale="5"
+        xChannelSelector="R"
+        yChannelSelector="G" />
+    </filter>
+
+    <!-- Grain texture for the trunk surface lines (bark detail) -->
+    <filter id="grain" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04 0.18" numOctaves="4" seed="99" result="n" />
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="4" xChannelSelector="R" yChannelSelector="G" />
+    </filter>
+
+  </defs>
+
+  <g mask="url(#fade-mask)" stroke="#D8DDE8" stroke-linecap="round" stroke-linejoin="round">
+
+    <!-- ════════════════════════════════════════════
+         TRUNK — multi-layer to simulate volume
+         Each layer is the same path at different
+         widths/opacities, giving a sense of depth.
+         ════════════════════════════════════════════ -->
+
+    <!-- Shadow / depth core -->
+    <path filter="url(#bark)" stroke-width="22" opacity="0.04"
+      d="M 580,0
+         C 545,38  498,72  448,112
+         C 398,150 348,195 304,252
+         C 268,298 242,348 230,408" />
+
+    <!-- Main trunk body -->
+    <path filter="url(#bark)" stroke-width="14" opacity="0.13"
+      d="M 580,0
+         C 545,38  498,72  448,112
+         C 398,150 348,195 304,252
+         C 268,298 242,348 230,408" />
+
+    <!-- Highlight edge — thinner, brighter -->
+    <path filter="url(#bark)" stroke-width="5" opacity="0.18"
+      d="M 578,2
+         C 542,40  496,74  445,114
+         C 395,152 344,197 300,255
+         C 264,301 238,350 226,410" />
+
+    <!-- Bark grain lines along trunk -->
+    <path filter="url(#grain)" stroke-width="1.2" opacity="0.09"
+      d="M 565,8  C 535,46  490,82  440,122 C 392,160 342,204 298,260" />
+    <path filter="url(#grain)" stroke-width="0.9" opacity="0.07"
+      d="M 570,4  C 540,42  494,78  444,118 C 395,156 345,200 302,256" />
+
+
+    <!-- ════════════════════════════════════════════
+         SECONDARY BRANCH A
+         Breaks upper-right from trunk near r=112
+         ════════════════════════════════════════════ -->
+
+    <path filter="url(#bark)" stroke-width="10" opacity="0.09"
+      d="M 448,112
+         C 472,92  500,70  530,44
+         C 552,24  570,10  580,2" />
+    <path filter="url(#bark)" stroke-width="6" opacity="0.13"
+      d="M 448,112
+         C 472,92  500,70  530,44
+         C 552,24  570,10  580,2" />
+    <path filter="url(#bark-thin)" stroke-width="2" opacity="0.15"
+      d="M 446,114
+         C 470,94  498,72  528,46
+         C 550,26  568,12  578,4" />
+
+    <!-- Tertiary off A -->
+    <path filter="url(#bark-thin)" stroke-width="5" opacity="0.09"
+      d="M 500,70
+         C 514,52  528,36  542,18
+         C 554,4   566,-4  578,-8" />
+    <path filter="url(#bark-thin)" stroke-width="2.5" opacity="0.12"
+      d="M 500,70
+         C 514,52  528,36  542,18" />
+
+    <!-- Quaternary hairlines off A -->
+    <path filter="url(#bark-thin)" stroke-width="2" opacity="0.09"
+      d="M 530,44
+         C 540,30  552,18  564,8" />
+    <path filter="url(#bark-thin)" stroke-width="1.5" opacity="0.07"
+      d="M 472,92
+         C 484,76  496,62  508,46" />
+
+
+    <!-- ════════════════════════════════════════════
+         SECONDARY BRANCH B
+         Extends left from trunk near r=195
+         ════════════════════════════════════════════ -->
+
+    <path filter="url(#bark)" stroke-width="9" opacity="0.08"
+      d="M 348,195
+         C 316,178 278,164 236,156
+         C 196,148 155,148 114,154" />
+    <path filter="url(#bark)" stroke-width="5.5" opacity="0.12"
+      d="M 348,195
+         C 316,178 278,164 236,156
+         C 196,148 155,148 114,154" />
+    <path filter="url(#bark-thin)" stroke-width="2" opacity="0.14"
+      d="M 346,197
+         C 314,180 276,166 234,158
+         C 194,150 153,150 112,156" />
+
+    <!-- Tertiary off B — shoots upward -->
+    <path filter="url(#bark-thin)" stroke-width="5" opacity="0.08"
+      d="M 278,164
+         C 264,142 254,118 250,90
+         C 246,66  248,42  254,20" />
+    <path filter="url(#bark-thin)" stroke-width="2.5" opacity="0.11"
+      d="M 278,164
+         C 264,142 254,118 250,90
+         C 246,66  248,42  254,20" />
+
+    <!-- Tertiary off B — sweeps down-left -->
+    <path filter="url(#bark-thin)" stroke-width="4.5" opacity="0.08"
+      d="M 196,148
+         C 174,162 154,180 136,202
+         C 120,222 108,244 100,268" />
+    <path filter="url(#bark-thin)" stroke-width="2" opacity="0.11"
+      d="M 196,148
+         C 174,162 154,180 136,202
+         C 120,222 108,244 100,268" />
+
+    <!-- Quaternary off B -->
+    <path filter="url(#bark-thin)" stroke-width="2.5" opacity="0.08"
+      d="M 114,154
+         C  94,150  72,150  50,154
+         C  32,158  16,166   4,178" />
+    <path filter="url(#bark-thin)" stroke-width="1.5" opacity="0.07"
+      d="M 250,90
+         C 244,68  240,46  242,24" />
+    <path filter="url(#bark-thin)" stroke-width="1.5" opacity="0.07"
+      d="M 100,268
+         C  88,286  80,306  76,328
+         C  72,350  72,372  76,394" />
+
+
+    <!-- ════════════════════════════════════════════
+         SECONDARY BRANCH C
+         Extends right from trunk near r=252
+         ════════════════════════════════════════════ -->
+
+    <path filter="url(#bark)" stroke-width="8" opacity="0.08"
+      d="M 304,252
+         C 334,238 366,226 398,218
+         C 428,210 458,206 486,202" />
+    <path filter="url(#bark)" stroke-width="5" opacity="0.11"
+      d="M 304,252
+         C 334,238 366,226 398,218
+         C 428,210 458,206 486,202" />
+    <path filter="url(#bark-thin)" stroke-width="1.8" opacity="0.13"
+      d="M 302,254
+         C 332,240 364,228 396,220
+         C 426,212 456,208 484,204" />
+
+    <!-- Tertiary off C -->
+    <path filter="url(#bark-thin)" stroke-width="4" opacity="0.08"
+      d="M 398,218
+         C 414,202 428,184 438,164
+         C 446,148 452,130 454,112" />
+    <path filter="url(#bark-thin)" stroke-width="2" opacity="0.10"
+      d="M 398,218
+         C 414,202 428,184 438,164
+         C 446,148 452,130 454,112" />
+
+    <!-- Quaternary off C -->
+    <path filter="url(#bark-thin)" stroke-width="2" opacity="0.08"
+      d="M 486,202
+         C 504,196 522,192 540,190
+         C 556,188 570,188 580,186" />
+    <path filter="url(#bark-thin)" stroke-width="1.5" opacity="0.07"
+      d="M 438,164
+         C 450,148 462,132 472,114
+         C 480,100 488,84  494,68" />
+
+
+    <!-- ════════════════════════════════════════════
+         TRUNK CONTINUATION — lower taper
+         ════════════════════════════════════════════ -->
+
+    <path filter="url(#bark-thin)" stroke-width="7" opacity="0.08"
+      d="M 268,298
+         C 252,316 240,338 232,362
+         C 225,386 222,410 224,436" />
+    <path filter="url(#bark-thin)" stroke-width="4" opacity="0.11"
+      d="M 268,298
+         C 252,316 240,338 232,362
+         C 225,386 222,410 224,436" />
+
+    <!-- Final tip strands -->
+    <path filter="url(#bark-thin)" stroke-width="2.5" opacity="0.08"
+      d="M 224,436
+         C 232,448 240,460 246,474" />
+    <path filter="url(#bark-thin)" stroke-width="2" opacity="0.07"
+      d="M 224,436
+         C 214,450 206,464 200,480" />
+    <path filter="url(#bark-thin)" stroke-width="2" opacity="0.07"
+      d="M 232,362
+         C 248,354 264,348 282,344" />
+
+  </g>
+</svg>
+
+</body>
+</html>

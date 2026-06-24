@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Backgrounds v6 — Void · Aramith Black Series</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=DM+Sans:wght@300;400&family=Fira+Code:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --text:      #D8DDE8;
+    --text-soft: rgba(216,221,232,0.62);
+    --text-dim:  rgba(216,221,232,0.28);
+    --accent:    #4A6A7C;
+    --cyan:      #2BB6E0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #050608; color: var(--text); font-family: 'DM Sans', sans-serif; font-weight: 300; }
+  body { padding: 48px 32px 80px; }
+  h1 { font-family: 'Cormorant Garamond', serif; font-weight: 300; font-style: italic; font-size: 42px; color: var(--text); margin-bottom: 8px; }
+  .sub { font-family: 'Fira Code', monospace; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-soft); margin-bottom: 32px; }
+  .section-h {
+    font-family: 'Fira Code', monospace; font-size: 11px; letter-spacing: 0.22em;
+    text-transform: uppercase; color: #d4d2cc; margin: 40px 0 16px;
+    border-bottom: 1px solid #333; padding-bottom: 8px;
+  }
+
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px; }
+  .tile { position: relative; aspect-ratio: 16/10; overflow: hidden; border: 1px solid #1a1a22; color: var(--text); }
+  .tile .label {
+    position: absolute; top: 14px; left: 16px; z-index: 70;
+    font-family: 'Fira Code', monospace; font-size: 9.5px; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--text);
+    background: rgba(10,15,25,0.55); padding: 4px 8px; backdrop-filter: blur(4px);
+    border: 1px solid rgba(216,221,232,0.10);
+  }
+  .tile .name {
+    position: absolute; bottom: 16px; left: 16px; z-index: 70;
+    font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 300;
+    font-size: 22px; color: var(--text);
+  }
+  .tile .desc {
+    position: absolute; bottom: 16px; right: 16px; z-index: 70; max-width: 50%;
+    font-family: 'Fira Code', monospace; font-size: 10.5px; line-height: 1.55;
+    color: var(--text-soft); text-align: right;
+  }
+
+  /* ============================================================
+     VOID BACKGROUNDS — no lines, only blobs/grain/conics
+     ============================================================ */
+
+  /* A · Indigo Void — violet aurora bleeds from corners */
+  .v-indigo {
+    background:
+      radial-gradient(ellipse 65% 50% at 15% 25%, rgba(140, 80, 220, 0.18) 0%, transparent 55%),
+      radial-gradient(ellipse 70% 55% at 85% 75%, rgba(100, 50, 200, 0.14) 0%, transparent 60%),
+      radial-gradient(ellipse 90% 80% at 50% 50%, rgba(40, 30, 100, 0.20) 0%, transparent 75%),
+      linear-gradient(160deg, #0a0a1c 0%, #0d0d2a 50%, #050513 100%);
+  }
+
+  /* B · Teal Abyss — light from above, abyss below */
+  .v-teal {
+    background:
+      radial-gradient(ellipse 70% 45% at 50% -10%, rgba(80, 200, 220, 0.18) 0%, transparent 65%),
+      radial-gradient(ellipse 120% 90% at 50% 110%, rgba(0, 18, 30, 0.6) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 40% at 80% 30%, rgba(40, 140, 160, 0.10) 0%, transparent 60%),
+      linear-gradient(180deg, #06222c 0%, #03181f 55%, #010a0e 100%);
+  }
+
+  /* C · Purple Mist — conic smoke swirls */
+  .v-purple {
+    background:
+      conic-gradient(from 200deg at 25% 35%, transparent 0%, rgba(160, 80, 200, 0.18) 25%, transparent 50%),
+      conic-gradient(from 30deg at 75% 70%, transparent 0%, rgba(110, 50, 170, 0.14) 30%, transparent 60%),
+      radial-gradient(ellipse 95% 75% at 50% 50%, rgba(60, 20, 80, 0.32) 0%, transparent 75%),
+      linear-gradient(135deg, #160820 0%, #1c0a2a 50%, #0a0418 100%);
+  }
+
+  /* D · Midnight Blend — teal → indigo → purple drift */
+  .v-blend {
+    background:
+      radial-gradient(circle at 12% 28%, rgba(70, 200, 220, 0.18) 0%, transparent 38%),
+      radial-gradient(circle at 88% 32%, rgba(120, 80, 220, 0.18) 0%, transparent 42%),
+      radial-gradient(circle at 50% 95%, rgba(160, 50, 180, 0.16) 0%, transparent 48%),
+      linear-gradient(135deg, #051826 0%, #0a0d28 55%, #150828 100%);
+  }
+
+  /* ============================================================
+     SOFT GRAIN (screen-mode, cool light noise)
+     ============================================================ */
+  .grain::after {
+    content:''; position:absolute; inset:0; pointer-events: none; z-index: 60;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='320'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.78' numOctaves='3' seed='9'/><feColorMatrix values='0 0 0 0 0.80   0 0 0 0 0.88   0 0 0 0 0.98   0 0 0 0.10 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    opacity: 0.55; mix-blend-mode: screen;
+  }
+  .grain::before {
+    content:''; position:absolute; inset:0; pointer-events: none; z-index: 2;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='s'><feTurbulence type='fractalNoise' baseFrequency='1.05' numOctaves='2' seed='5'/><feColorMatrix values='0 0 0 0 0.72   0 0 0 0 0.82   0 0 0 0 0.95   0 0 0 0.08 0'/></filter><rect width='100%' height='100%' filter='url(%23s)'/></svg>");
+    opacity: 0.40; mix-blend-mode: screen;
+  }
+
+  /* ============================================================
+     CIRCLE RIG — production parity (production uses opacity .10 + luminosity)
+     ============================================================ */
+  .circle-rig {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60%; aspect-ratio: 1; z-index: 35;
+  }
+  .eightball-wrap {
+    position: absolute; inset: 0; margin: 14% auto auto 14%; width: 72%; height: 72%;
+    z-index: 0; pointer-events: none;
+  }
+  .eightball-img { width: 100%; height: 100%; object-fit: contain; opacity: 0.10; mix-blend-mode: luminosity; }
+  .circle-rig svg { width: 100%; height: 100%; overflow: visible; position: relative; z-index: 2; }
+  .ring-rig { fill: none; stroke: var(--text); }
+  .rs { stroke-width: .6; opacity: .10; }
+  .rd { stroke-width: .6; opacity: .08; stroke-dasharray: 2.5 11; }
+  /* tight cyan rings hugging the orb (the only "lines" allowed) */
+  .ring-hug { fill: none; stroke: var(--cyan); stroke-width: .6; }
+  .arc-acc { fill: none; stroke-width: 2.4; stroke-linecap: round; opacity: 0.85; }
+  .node-dot { fill: var(--accent); opacity: 0.9; }
+  .node-ring { fill: none; stroke: var(--accent); stroke-width: 1; opacity: 0.45; }
+  .node-line { stroke: var(--accent); stroke-width: 0.7; opacity: 0.8; }
+  .node-label { font-family: 'Fira Code', monospace; font-size: 8.5px; fill: var(--text-soft); letter-spacing: 0.14em; text-transform: uppercase; text-anchor: middle; }
+  .c-label { font-family: 'Fira Code', monospace; font-size: 9px; fill: var(--text-soft); text-anchor: middle; letter-spacing: 0.18em; }
+  .orbit-text { font-family: 'Fira Code', monospace; font-size: 8.5px; fill: var(--text); opacity: 0.22; letter-spacing: 4px; }
+  .outer { transform-origin: 280px 280px; animation: spin 85s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ============================================================
+     ARAMITH TOURNAMENT BLACK SERIES — bubble billiard balls
+     Each ball: black body, colored stripe band, white spot for number,
+     glossy highlight top-left, soft colored outer glow.
+     Outlines are *very* light + transparent so they read as glowing
+     spheres rising through the void — not hard-edged graphics.
+     ============================================================ */
+  .ball {
+    position: absolute; border-radius: 50%; z-index: 22; pointer-events: none;
+    display: grid; place-items: center;
+    background:
+      /* gloss highlight */
+      radial-gradient(circle at 32% 26%, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.10) 10%, transparent 28%),
+      /* white spot behind the number */
+      radial-gradient(circle at 50% 50%, #f4f3ee 0 17%, transparent 17.5%),
+      /* base body — deep aramith black */
+      linear-gradient(180deg, #1a1a22 0%, #08080c 100%);
+    /* light, transparent outline + glow halo */
+    box-shadow:
+      0 0 0 0.5px rgba(255,255,255,0.10),
+      inset 0 0 10px rgba(0,0,0,0.45),
+      0 14px 36px rgba(0,0,0,0.55);
+  }
+
+  /* === COLORED STRIPE BALLS — color band runs across the middle === */
+  .ball.b9   { /* yellow */
+    background:
+      radial-gradient(circle at 32% 26%, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.15) 10%, transparent 28%),
+      radial-gradient(circle at 50% 50%, #f4f3ee 0 17%, transparent 17.5%),
+      linear-gradient(180deg,
+        #0a0a10 0%, #0a0a10 30%,
+        #f5d442 32%, #d4b50f 50%, #b09008 68%,
+        #0a0a10 70%, #0a0a10 100%);
+  }
+  .ball.b11  { /* red */
+    background:
+      radial-gradient(circle at 32% 26%, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.15) 10%, transparent 28%),
+      radial-gradient(circle at 50% 50%, #f4f3ee 0 17%, transparent 17.5%),
+      linear-gradient(180deg,
+        #0a0a10 0%, #0a0a10 30%,
+        #d83838 32%, #a91818 50%, #821010 68%,
+        #0a0a10 70%, #0a0a10 100%);
+  }
+  .ball.b13  { /* orange */
+    background:
+      radial-gradient(circle at 32% 26%, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.15) 10%, transparent 28%),
+      radial-gradient(circle at 50% 50%, #f4f3ee 0 17%, transparent 17.5%),
+      linear-gradient(180deg,
+        #0a0a10 0%, #0a0a10 30%,
+        #ee8a30 32%, #c4660a 50%, #934b08 68%,
+        #0a0a10 70%, #0a0a10 100%);
+  }
+  .ball.b14  { /* green */
+    background:
+      radial-gradient(circle at 32% 26%, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.15) 10%, transparent 28%),
+      radial-gradient(circle at 50% 50%, #f4f3ee 0 17%, transparent 17.5%),
+      linear-gradient(180deg,
+        #0a0a10 0%, #0a0a10 30%,
+        #3fcb7e 32%, #168948 50%, #0c6132 68%,
+        #0a0a10 70%, #0a0a10 100%);
+  }
+
+  /* 8-ball — solid black, white spot, no band */
+  .ball.b8 {
+    background:
+      radial-gradient(circle at 32% 26%, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.10) 10%, transparent 30%),
+      radial-gradient(circle at 50% 50%, #f4f3ee 0 17%, transparent 17.5%),
+      linear-gradient(180deg, #1a1a22 0%, #06060a 100%);
+  }
+
+  /* number glyph */
+  .ball .num {
+    position: relative; z-index: 2;
+    font-family: 'DM Sans', sans-serif; font-weight: 400;
+    color: #0a0a10; letter-spacing: -0.02em;
+  }
+
+  /* === PER-TILE OUTLINE GLOWS — lighter + more transparent === */
+  /* Indigo Void → violet halo */
+  .v-indigo .ball {
+    box-shadow:
+      0 0 0 0.5px rgba(190,170,255,0.18),
+      inset 0 0 10px rgba(0,0,0,0.45),
+      0 0 22px rgba(160,100,230,0.25),
+      0 18px 40px rgba(0,0,0,0.55);
+  }
+  /* Teal Abyss → cyan halo (bioluminescent) */
+  .v-teal .ball {
+    box-shadow:
+      0 0 0 0.5px rgba(180,230,240,0.20),
+      inset 0 0 10px rgba(0,0,0,0.45),
+      0 0 22px rgba(80,200,220,0.30),
+      0 18px 40px rgba(0,0,0,0.55);
+  }
+  /* Purple Mist → magenta halo */
+  .v-purple .ball {
+    box-shadow:
+      0 0 0 0.5px rgba(230,180,240,0.18),
+      inset 0 0 10px rgba(0,0,0,0.45),
+      0 0 22px rgba(200,90,210,0.25),
+      0 18px 40px rgba(0,0,0,0.55);
+  }
+  /* Midnight Blend → soft cool halo (subtle, ambient) */
+  .v-blend .ball {
+    box-shadow:
+      0 0 0 0.5px rgba(200,210,240,0.16),
+      inset 0 0 10px rgba(0,0,0,0.45),
+      0 0 20px rgba(120,160,230,0.22),
+      0 18px 40px rgba(0,0,0,0.55);
+  }
+
+</style>
+</head>
+<body>
+
+<h1>v6 — void · aramith black series</h1>
+<div class="sub">Eerie · mysterious · intriguing · 8/9/stripe balls glow rising through depth</div>
+
+<div class="grid">
+
+  <!-- =============== V6-A · INDIGO VOID =============== -->
+  <div class="tile v-indigo grain">
+    <span class="label">V6-A — Indigo Void</span>
+
+    <div class="ball b8"  style="width:54px; height:54px; top:11%; left:8%;"><span class="num" style="font-size:14px;">8</span></div>
+    <div class="ball b9"  style="width:42px; height:42px; top:22%; right:22%;"><span class="num" style="font-size:11px;">9</span></div>
+    <div class="ball b11" style="width:38px; height:38px; bottom:22%; right:9%;"><span class="num" style="font-size:10px;">11</span></div>
+
+    <div class="circle-rig">
+      <div class="eightball-wrap"><img class="eightball-img" src="../../portfolio/src/8_ball_no_background.png" alt=""></div>
+      <svg viewBox="0 0 560 560">
+        <circle class="ring-hug" cx="280" cy="280" r="148" opacity=".55"/>
+        <circle class="ring-hug" cx="280" cy="280" r="156" opacity=".40"/>
+        <circle class="ring-hug" cx="280" cy="280" r="165" opacity=".26"/>
+        <circle class="ring-hug" cx="280" cy="280" r="175" opacity=".16"/>
+
+        <circle class="ring-rig rs" cx="280" cy="280" r="210"/>
+        <circle class="ring-rig rd" cx="280" cy="280" r="195"/>
+        <path class="arc-acc" stroke="#9870e6" d="M 368.7,89.7 A 210,210 0 0,1 452.0,159.6"/>
+        <path class="arc-acc" stroke="#9870e6" d="M 482.8,225.7 A 210,210 0 0,1 482.8,334.3"/>
+        <path class="arc-acc" stroke="#9870e6" d="M 452.0,400.4 A 210,210 0 0,1 368.7,470.3"/>
+        <g class="outer"><circle class="ring-rig rs" cx="280" cy="280" r="250" opacity=".18"/><defs><path id="ta" d="M280,280 m-238,0 a238,238 0 1,1 476,0 a238,238 0 1,1 -476,0"/></defs><text class="orbit-text"><textPath href="#ta">SOLUTIONS ENGINEER · SOFTWARE ENGINEER ·</textPath></text></g>
+        <text class="c-label" x="280" y="276">P · RANK</text>
+        <text class="c-label" x="280" y="291" font-size="8" opacity=".55">2026</text>
+        <g><circle class="node-ring" cx="414.9" cy="119.1" r="11"/><circle class="node-dot" cx="414.9" cy="119.1" r="3.5"/><line class="node-line" x1="419" y1="119.1" x2="548" y2="119.1"/><text class="node-label" x="414.9" y="107">Experience</text></g>
+        <g><circle class="node-ring" cx="490" cy="280" r="11"/><circle class="node-dot" cx="490" cy="280" r="3.5"/><line class="node-line" x1="494" y1="280" x2="548" y2="280"/><text class="node-label" x="490" y="268">Projects</text></g>
+        <g><circle class="node-ring" cx="414.9" cy="440.9" r="11"/><circle class="node-dot" cx="414.9" cy="440.9" r="3.5"/><line class="node-line" x1="419" y1="440.9" x2="548" y2="440.9"/><text class="node-label" x="414.9" y="459">About</text></g>
+      </svg>
+    </div>
+
+    <div class="name">Indigo Void</div>
+    <div class="desc">Violet auroras bleed from corners. Bubbles glow with a faint amethyst halo — sediment grain throughout.</div>
+  </div>
+
+  <!-- =============== V6-B · TEAL ABYSS =============== -->
+  <div class="tile v-teal grain">
+    <span class="label">V6-B — Teal Abyss</span>
+
+    <div class="ball b8"  style="width:54px; height:54px; top:11%; left:8%;"><span class="num" style="font-size:14px;">8</span></div>
+    <div class="ball b14" style="width:42px; height:42px; top:22%; right:22%;"><span class="num" style="font-size:10px;">14</span></div>
+    <div class="ball b9"  style="width:38px; height:38px; bottom:22%; right:9%;"><span class="num" style="font-size:11px;">9</span></div>
+
+    <div class="circle-rig">
+      <div class="eightball-wrap"><img class="eightball-img" src="../../portfolio/src/8_ball_no_background.png" alt=""></div>
+      <svg viewBox="0 0 560 560">
+        <circle class="ring-hug" cx="280" cy="280" r="148" opacity=".60"/>
+        <circle class="ring-hug" cx="280" cy="280" r="156" opacity=".42"/>
+        <circle class="ring-hug" cx="280" cy="280" r="165" opacity=".28"/>
+        <circle class="ring-hug" cx="280" cy="280" r="175" opacity=".18"/>
+
+        <circle class="ring-rig rs" cx="280" cy="280" r="210"/>
+        <circle class="ring-rig rd" cx="280" cy="280" r="195"/>
+        <path class="arc-acc" stroke="var(--cyan)" d="M 368.7,89.7 A 210,210 0 0,1 452.0,159.6"/>
+        <path class="arc-acc" stroke="var(--cyan)" d="M 482.8,225.7 A 210,210 0 0,1 482.8,334.3"/>
+        <path class="arc-acc" stroke="var(--cyan)" d="M 452.0,400.4 A 210,210 0 0,1 368.7,470.3"/>
+        <g class="outer"><circle class="ring-rig rs" cx="280" cy="280" r="250" opacity=".18"/><defs><path id="tb" d="M280,280 m-238,0 a238,238 0 1,1 476,0 a238,238 0 1,1 -476,0"/></defs><text class="orbit-text"><textPath href="#tb">SOLUTIONS ENGINEER · SOFTWARE ENGINEER ·</textPath></text></g>
+        <text class="c-label" x="280" y="276">P · RANK</text>
+        <text class="c-label" x="280" y="291" font-size="8" opacity=".55">2026</text>
+        <g><circle class="node-ring" cx="414.9" cy="119.1" r="11"/><circle class="node-dot" cx="414.9" cy="119.1" r="3.5"/><line class="node-line" x1="419" y1="119.1" x2="548" y2="119.1"/><text class="node-label" x="414.9" y="107">Experience</text></g>
+        <g><circle class="node-ring" cx="490" cy="280" r="11"/><circle class="node-dot" cx="490" cy="280" r="3.5"/><line class="node-line" x1="494" y1="280" x2="548" y2="280"/><text class="node-label" x="490" y="268">Projects</text></g>
+        <g><circle class="node-ring" cx="414.9" cy="440.9" r="11"/><circle class="node-dot" cx="414.9" cy="440.9" r="3.5"/><line class="node-line" x1="419" y1="440.9" x2="548" y2="440.9"/><text class="node-label" x="414.9" y="459">About</text></g>
+      </svg>
+    </div>
+
+    <div class="name">Teal Abyss</div>
+    <div class="desc">Light filters from above; the floor drinks it. Bubbles glow bioluminescent cyan — they're rising.</div>
+  </div>
+
+  <!-- =============== V6-C · PURPLE MIST =============== -->
+  <div class="tile v-purple grain">
+    <span class="label">V6-C — Purple Mist</span>
+
+    <div class="ball b8"  style="width:54px; height:54px; top:11%; left:8%;"><span class="num" style="font-size:14px;">8</span></div>
+    <div class="ball b11" style="width:42px; height:42px; top:22%; right:22%;"><span class="num" style="font-size:10px;">11</span></div>
+    <div class="ball b13" style="width:38px; height:38px; bottom:22%; right:9%;"><span class="num" style="font-size:10px;">13</span></div>
+
+    <div class="circle-rig">
+      <div class="eightball-wrap"><img class="eightball-img" src="../../portfolio/src/8_ball_no_background.png" alt=""></div>
+      <svg viewBox="0 0 560 560">
+        <circle class="ring-hug" cx="280" cy="280" r="148" opacity=".55"/>
+        <circle class="ring-hug" cx="280" cy="280" r="156" opacity=".40"/>
+        <circle class="ring-hug" cx="280" cy="280" r="165" opacity=".26"/>
+        <circle class="ring-hug" cx="280" cy="280" r="175" opacity=".16"/>
+
+        <circle class="ring-rig rs" cx="280" cy="280" r="210"/>
+        <circle class="ring-rig rd" cx="280" cy="280" r="195"/>
+        <path class="arc-acc" stroke="#c060d0" d="M 368.7,89.7 A 210,210 0 0,1 452.0,159.6"/>
+        <path class="arc-acc" stroke="#c060d0" d="M 482.8,225.7 A 210,210 0 0,1 482.8,334.3"/>
+        <path class="arc-acc" stroke="#c060d0" d="M 452.0,400.4 A 210,210 0 0,1 368.7,470.3"/>
+        <g class="outer"><circle class="ring-rig rs" cx="280" cy="280" r="250" opacity=".18"/><defs><path id="tc" d="M280,280 m-238,0 a238,238 0 1,1 476,0 a238,238 0 1,1 -476,0"/></defs><text class="orbit-text"><textPath href="#tc">SOLUTIONS ENGINEER · SOFTWARE ENGINEER ·</textPath></text></g>
+        <text class="c-label" x="280" y="276">P · RANK</text>
+        <text class="c-label" x="280" y="291" font-size="8" opacity=".55">2026</text>
+        <g><circle class="node-ring" cx="414.9" cy="119.1" r="11"/><circle class="node-dot" cx="414.9" cy="119.1" r="3.5"/><line class="node-line" x1="419" y1="119.1" x2="548" y2="119.1"/><text class="node-label" x="414.9" y="107">Experience</text></g>
+        <g><circle class="node-ring" cx="490" cy="280" r="11"/><circle class="node-dot" cx="490" cy="280" r="3.5"/><line class="node-line" x1="494" y1="280" x2="548" y2="280"/><text class="node-label" x="490" y="268">Projects</text></g>
+        <g><circle class="node-ring" cx="414.9" cy="440.9" r="11"/><circle class="node-dot" cx="414.9" cy="440.9" r="3.5"/><line class="node-line" x1="419" y1="440.9" x2="548" y2="440.9"/><text class="node-label" x="414.9" y="459">About</text></g>
+      </svg>
+    </div>
+
+    <div class="name">Purple Mist</div>
+    <div class="desc">Conic smoke drifts across plum darkness. Magenta halos. Quietest of the four — the most dream-state.</div>
+  </div>
+
+  <!-- =============== V6-D · MIDNIGHT BLEND =============== -->
+  <div class="tile v-blend grain">
+    <span class="label">V6-D — Midnight Blend</span>
+
+    <div class="ball b8"  style="width:54px; height:54px; top:11%; left:8%;"><span class="num" style="font-size:14px;">8</span></div>
+    <div class="ball b9"  style="width:42px; height:42px; top:22%; right:22%;"><span class="num" style="font-size:11px;">9</span></div>
+    <div class="ball b14" style="width:38px; height:38px; bottom:22%; right:9%;"><span class="num" style="font-size:10px;">14</span></div>
+
+    <div class="circle-rig">
+      <div class="eightball-wrap"><img class="eightball-img" src="../../portfolio/src/8_ball_no_background.png" alt=""></div>
+      <svg viewBox="0 0 560 560">
+        <circle class="ring-hug" cx="280" cy="280" r="148" opacity=".58"/>
+        <circle class="ring-hug" cx="280" cy="280" r="156" opacity=".42"/>
+        <circle class="ring-hug" cx="280" cy="280" r="165" opacity=".28"/>
+        <circle class="ring-hug" cx="280" cy="280" r="175" opacity=".18"/>
+
+        <circle class="ring-rig rs" cx="280" cy="280" r="210"/>
+        <circle class="ring-rig rd" cx="280" cy="280" r="195"/>
+        <path class="arc-acc" stroke="var(--cyan)" d="M 368.7,89.7 A 210,210 0 0,1 452.0,159.6"/>
+        <path class="arc-acc" stroke="#a070e0" d="M 482.8,225.7 A 210,210 0 0,1 482.8,334.3"/>
+        <path class="arc-acc" stroke="#c060c0" d="M 452.0,400.4 A 210,210 0 0,1 368.7,470.3"/>
+        <g class="outer"><circle class="ring-rig rs" cx="280" cy="280" r="250" opacity=".18"/><defs><path id="td" d="M280,280 m-238,0 a238,238 0 1,1 476,0 a238,238 0 1,1 -476,0"/></defs><text class="orbit-text"><textPath href="#td">SOLUTIONS ENGINEER · SOFTWARE ENGINEER ·</textPath></text></g>
+        <text class="c-label" x="280" y="276">P · RANK</text>
+        <text class="c-label" x="280" y="291" font-size="8" opacity=".55">2026</text>
+        <g><circle class="node-ring" cx="414.9" cy="119.1" r="11"/><circle class="node-dot" cx="414.9" cy="119.1" r="3.5"/><line class="node-line" x1="419" y1="119.1" x2="548" y2="119.1"/><text class="node-label" x="414.9" y="107">Experience</text></g>
+        <g><circle class="node-ring" cx="490" cy="280" r="11"/><circle class="node-dot" cx="490" cy="280" r="3.5"/><line class="node-line" x1="494" y1="280" x2="548" y2="280"/><text class="node-label" x="490" y="268">Projects</text></g>
+        <g><circle class="node-ring" cx="414.9" cy="440.9" r="11"/><circle class="node-dot" cx="414.9" cy="440.9" r="3.5"/><line class="node-line" x1="419" y1="440.9" x2="548" y2="440.9"/><text class="node-label" x="414.9" y="459">About</text></g>
+      </svg>
+    </div>
+
+    <div class="name">Midnight Blend</div>
+    <div class="desc">Teal in one corner, indigo in the center, magenta in the depths. Each arc takes its own color.</div>
+  </div>
+
+</div>
+
+</body>
+</html>

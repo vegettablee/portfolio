@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Font Pairing Preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <!--
+    Source pairings drawn from classic type combinations:
+    Bodoni/Futura · Garamond/Franklin Gothic · Caslon/Trade Gothic ·
+    Clarendon/Univers · Garamond/Gill Sans · Bodoni/Akzidenz Grotesk
+    Mapped to nearest Google Fonts equivalents.
+  -->
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,700;0,6..96,900;1,6..96,300;1,6..96,400&family=Jost:wght@200;300;400;500&family=EB+Garamond:ital,wght@0,400;0,500;0,700;1,400&family=Libre+Franklin:wght@300;400;500;600&family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Barlow+Condensed:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&family=Zilla+Slab:ital,wght@0,300;0,400;0,600;1,300&family=Work+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400&display=swap" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0D0C0A;
+      color: #F0EAD6;
+      padding: 56px 48px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .page-label {
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #3A3630;
+      margin-bottom: 12px;
+    }
+
+    .page-sub {
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      color: #2C2A26;
+      margin-bottom: 64px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #1A1815;
+    }
+
+    .pairing {
+      margin-bottom: 80px;
+      border: 1px solid #1A1815;
+    }
+
+    .pairing-header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      padding: 12px 24px;
+      background: #1A1815;
+      border-bottom: 1px solid #2C2A26;
+    }
+
+    .pairing-name {
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #A07840;
+    }
+
+    .pairing-origin {
+      font-size: 9px;
+      letter-spacing: 0.08em;
+      color: #3A3630;
+    }
+
+    .pairing-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    /* LEFT: specimen */
+    .specimen {
+      padding: 36px 32px;
+      border-right: 1px solid #1A1815;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .spec-block {}
+
+    .spec-label {
+      font-size: 8px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #2C2A26;
+      margin-bottom: 10px;
+    }
+
+    .spec-name {
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      color: #4A4640;
+      margin-bottom: 14px;
+    }
+
+    .spec-display {
+      color: #F0EAD6;
+      line-height: 1.1;
+    }
+
+    .spec-alpha {
+      font-size: 12px;
+      line-height: 1.9;
+      color: #5A5450;
+      margin-top: 10px;
+      letter-spacing: 0.03em;
+    }
+
+    .spec-divider {
+      border: none;
+      border-top: 1px solid #1A1815;
+    }
+
+    /* RIGHT: mockup */
+    .mockup {
+      padding: 36px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .mock-nav {
+      display: flex;
+      gap: 20px;
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #4A4640;
+      margin-bottom: 8px;
+    }
+
+    .mock-nav-accent { color: #A07840; }
+
+    .mock-eyebrow {
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #A07840;
+      margin-bottom: 10px;
+    }
+
+    .mock-hero {
+      line-height: 1.02;
+      color: #F0EAD6;
+      margin-bottom: 14px;
+    }
+
+    .mock-body-text {
+      font-size: 12px;
+      line-height: 1.7;
+      color: #6A6460;
+      max-width: 320px;
+      margin-bottom: 20px;
+    }
+
+    .mock-btn {
+      display: inline-block;
+      padding: 8px 18px;
+      border: 1px solid #A07840;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #A07840;
+      margin-bottom: 28px;
+    }
+
+    .mock-card {
+      background: #131210;
+      border: 1px solid #2C2A26;
+      padding: 18px 20px;
+    }
+
+    .mock-card-eye {
+      font-size: 8px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #A07840;
+      margin-bottom: 8px;
+    }
+
+    .mock-card-title {
+      line-height: 1.2;
+      color: #F0EAD6;
+      margin-bottom: 6px;
+    }
+
+    .mock-card-body {
+      font-size: 11px;
+      line-height: 1.65;
+      color: #5A5450;
+    }
+
+    /* ── Pairing 1: Bodoni Moda + Jost ── */
+    .h1 { font-family: 'Bodoni Moda', serif; }
+    .b1 { font-family: 'Jost', sans-serif; }
+
+    /* ── Pairing 2: EB Garamond + Libre Franklin ── */
+    .h2 { font-family: 'EB Garamond', serif; }
+    .b2 { font-family: 'Libre Franklin', sans-serif; }
+
+    /* ── Pairing 3: Libre Caslon + Barlow Condensed ── */
+    .h3 { font-family: 'Libre Caslon Text', serif; }
+    .b3 { font-family: 'Barlow Condensed', sans-serif; }
+
+    /* ── Pairing 4: Cormorant Garamond + DM Sans ── */
+    .h4 { font-family: 'Cormorant Garamond', serif; }
+    .b4 { font-family: 'DM Sans', sans-serif; }
+
+    /* ── Pairing 5: Zilla Slab + Work Sans ── */
+    .h5 { font-family: 'Zilla Slab', serif; }
+    .b5 { font-family: 'Work Sans', sans-serif; }
+  </style>
+</head>
+<body>
+
+  <div class="page-label">Font Pairing Preview — Archive Editorial Palette</div>
+  <div class="page-sub">Source: classic type combinations — Bodoni/Futura · Garamond/Franklin Gothic · Caslon/Trade Gothic · Clarendon/Univers · Garamond/Akzidenz — mapped to Google Fonts equivalents</div>
+
+
+  <!-- ══ PAIRING 1 ══ -->
+  <div class="pairing">
+    <div class="pairing-header">
+      <span class="pairing-name">1 — Bodoni Moda · Jost</span>
+      <span class="pairing-origin">source: Bodoni Std · Futura</span>
+    </div>
+    <div class="pairing-body">
+      <div class="specimen">
+        <div class="spec-block">
+          <div class="spec-label">Heading — Bodoni Moda</div>
+          <div class="spec-name">High-contrast serif · thick/thin strokes · fashion editorial</div>
+          <div class="spec-display h1" style="font-size:42px; font-weight:900; letter-spacing:-0.02em;">
+            Aa Bb Cc<br>Dd Ee Ff
+          </div>
+          <div class="spec-alpha h1" style="font-weight:400; font-style:italic;">
+            ABCDEFGHIJKLM<br>abcdefghijklmnop
+          </div>
+        </div>
+        <hr class="spec-divider" />
+        <div class="spec-block">
+          <div class="spec-label">Body — Jost</div>
+          <div class="spec-name">Geometric sans · clean proportions · Futura analog</div>
+          <div class="spec-display b1" style="font-size:22px; font-weight:200; letter-spacing:0.08em;">
+            Aa Bb Cc Dd Ee Ff
+          </div>
+          <div class="spec-alpha b1" style="font-weight:300;">
+            ABCDEFGHIJKLMNOP<br>abcdefghijklmnopqrst
+          </div>
+        </div>
+      </div>
+      <div class="mockup">
+        <div class="mock-nav b1">
+          <span class="mock-nav-accent">Work</span><span>About</span><span>Contact</span>
+        </div>
+        <div>
+          <div class="mock-eyebrow b1">Solutions Engineer</div>
+          <div class="mock-hero h1" style="font-size:54px; font-weight:900;">Preston<br><em style="font-weight:400;">Rank</em></div>
+          <div class="mock-body-text b1" style="font-weight:300; letter-spacing:0.04em;">Building systems at the intersection of product and engineering. Available for select work.</div>
+          <div class="mock-btn">View Work</div>
+        </div>
+        <div class="mock-card">
+          <div class="mock-card-eye b1">Experience</div>
+          <div class="mock-card-title h1" style="font-size:17px; font-weight:700;">Solutions Engineer</div>
+          <div class="mock-card-body b1" style="font-weight:300;">Designing integration patterns for enterprise clients across complex technical environments.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══ PAIRING 2 ══ -->
+  <div class="pairing">
+    <div class="pairing-header">
+      <span class="pairing-name">2 — EB Garamond · Libre Franklin</span>
+      <span class="pairing-origin">source: Adobe Garamond Pro · ITC Franklin Gothic</span>
+    </div>
+    <div class="pairing-body">
+      <div class="specimen">
+        <div class="spec-block">
+          <div class="spec-label">Heading — EB Garamond</div>
+          <div class="spec-name">Old-style serif · warm humanist · archivepdf editorial energy</div>
+          <div class="spec-display h2" style="font-size:44px; font-weight:500; letter-spacing:-0.01em;">
+            Aa Bb Cc<br>Dd Ee Ff
+          </div>
+          <div class="spec-alpha h2" style="font-weight:400; font-style:italic;">
+            ABCDEFGHIJKLM<br>abcdefghijklmnop
+          </div>
+        </div>
+        <hr class="spec-divider" />
+        <div class="spec-block">
+          <div class="spec-label">Body — Libre Franklin</div>
+          <div class="spec-name">Gothic sans · news editorial authority · Franklin Gothic analog</div>
+          <div class="spec-display b2" style="font-size:20px; font-weight:300; letter-spacing:0.06em;">
+            Aa Bb Cc Dd Ee Ff
+          </div>
+          <div class="spec-alpha b2" style="font-weight:300;">
+            ABCDEFGHIJKLMNOP<br>abcdefghijklmnopqrst
+          </div>
+        </div>
+      </div>
+      <div class="mockup">
+        <div class="mock-nav b2">
+          <span class="mock-nav-accent">Work</span><span>About</span><span>Contact</span>
+        </div>
+        <div>
+          <div class="mock-eyebrow b2">Solutions Engineer</div>
+          <div class="mock-hero h2" style="font-size:58px; font-weight:500; letter-spacing:-0.01em;">Preston<br><em>Rank</em></div>
+          <div class="mock-body-text b2" style="font-weight:300; letter-spacing:0.03em;">Building systems at the intersection of product and engineering. Available for select work.</div>
+          <div class="mock-btn">View Work</div>
+        </div>
+        <div class="mock-card">
+          <div class="mock-card-eye b2">Experience</div>
+          <div class="mock-card-title h2" style="font-size:19px; font-weight:500;">Solutions Engineer</div>
+          <div class="mock-card-body b2" style="font-weight:300;">Designing integration patterns for enterprise clients across complex technical environments.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══ PAIRING 3 ══ -->
+  <div class="pairing">
+    <div class="pairing-header">
+      <span class="pairing-name">3 — Libre Caslon · Barlow Condensed</span>
+      <span class="pairing-origin">source: Adobe Caslon Pro · Trade Gothic LT Condensed</span>
+    </div>
+    <div class="pairing-body">
+      <div class="specimen">
+        <div class="spec-block">
+          <div class="spec-label">Heading — Libre Caslon Text</div>
+          <div class="spec-name">American serif · sturdy · traditional editorial weight</div>
+          <div class="spec-display h3" style="font-size:40px; font-weight:700; letter-spacing:-0.01em;">
+            Aa Bb Cc<br>Dd Ee Ff
+          </div>
+          <div class="spec-alpha h3" style="font-weight:400; font-style:italic;">
+            ABCDEFGHIJKLM<br>abcdefghijklmnop
+          </div>
+        </div>
+        <hr class="spec-divider" />
+        <div class="spec-block">
+          <div class="spec-label">Body — Barlow Condensed</div>
+          <div class="spec-name">Condensed grotesque · stark · Trade Gothic analog</div>
+          <div class="spec-display b3" style="font-size:22px; font-weight:300; letter-spacing:0.1em; text-transform:uppercase;">
+            Aa Bb Cc Dd Ee Ff
+          </div>
+          <div class="spec-alpha b3" style="font-weight:300; letter-spacing:0.06em;">
+            ABCDEFGHIJKLMNOP<br>abcdefghijklmnopqrst
+          </div>
+        </div>
+      </div>
+      <div class="mockup">
+        <div class="mock-nav b3" style="letter-spacing:0.22em; text-transform:uppercase;">
+          <span class="mock-nav-accent">Work</span><span>About</span><span>Contact</span>
+        </div>
+        <div>
+          <div class="mock-eyebrow b3">Solutions Engineer</div>
+          <div class="mock-hero h3" style="font-size:50px; font-weight:700; letter-spacing:-0.01em;">Preston<br><em style="font-weight:400;">Rank</em></div>
+          <div class="mock-body-text b3" style="font-weight:300; letter-spacing:0.06em; text-transform:uppercase; font-size:11px;">Building systems at the intersection of product and engineering.</div>
+          <div class="mock-btn">View Work</div>
+        </div>
+        <div class="mock-card">
+          <div class="mock-card-eye b3">Experience</div>
+          <div class="mock-card-title h3" style="font-size:17px; font-weight:700;">Solutions Engineer</div>
+          <div class="mock-card-body b3" style="font-weight:300; letter-spacing:0.04em;">Designing integration patterns for enterprise clients across complex technical environments.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══ PAIRING 4 ══ -->
+  <div class="pairing">
+    <div class="pairing-header">
+      <span class="pairing-name">4 — Cormorant Garamond · DM Sans</span>
+      <span class="pairing-origin">source: Warnock Pro · Akzidenz-Grotesk</span>
+    </div>
+    <div class="pairing-body">
+      <div class="specimen">
+        <div class="spec-block">
+          <div class="spec-label">Heading — Cormorant Garamond</div>
+          <div class="spec-name">Delicate serif · hairline strokes · high-end Japanese fashion editorial</div>
+          <div class="spec-display h4" style="font-size:46px; font-weight:300; letter-spacing:0.01em;">
+            Aa Bb Cc<br>Dd Ee Ff
+          </div>
+          <div class="spec-alpha h4" style="font-weight:300; font-style:italic;">
+            ABCDEFGHIJKLM<br>abcdefghijklmnop
+          </div>
+        </div>
+        <hr class="spec-divider" />
+        <div class="spec-block">
+          <div class="spec-label">Body — DM Sans</div>
+          <div class="spec-name">Neutral grotesque · modern · Akzidenz analog</div>
+          <div class="spec-display b4" style="font-size:20px; font-weight:300; letter-spacing:0.05em;">
+            Aa Bb Cc Dd Ee Ff
+          </div>
+          <div class="spec-alpha b4" style="font-weight:300;">
+            ABCDEFGHIJKLMNOP<br>abcdefghijklmnopqrst
+          </div>
+        </div>
+      </div>
+      <div class="mockup">
+        <div class="mock-nav b4">
+          <span class="mock-nav-accent">Work</span><span>About</span><span>Contact</span>
+        </div>
+        <div>
+          <div class="mock-eyebrow b4">Solutions Engineer</div>
+          <div class="mock-hero h4" style="font-size:62px; font-weight:300; letter-spacing:0.01em;">Preston<br><em>Rank</em></div>
+          <div class="mock-body-text b4" style="font-weight:300;">Building systems at the intersection of product and engineering. Available for select work.</div>
+          <div class="mock-btn">View Work</div>
+        </div>
+        <div class="mock-card">
+          <div class="mock-card-eye b4">Experience</div>
+          <div class="mock-card-title h4" style="font-size:20px; font-weight:400;">Solutions Engineer</div>
+          <div class="mock-card-body b4" style="font-weight:300;">Designing integration patterns for enterprise clients across complex technical environments.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══ PAIRING 5 ══ -->
+  <div class="pairing">
+    <div class="pairing-header">
+      <span class="pairing-name">5 — Zilla Slab · Work Sans</span>
+      <span class="pairing-origin">source: Clarendon LT Std · Univers Light</span>
+    </div>
+    <div class="pairing-body">
+      <div class="specimen">
+        <div class="spec-block">
+          <div class="spec-label">Heading — Zilla Slab</div>
+          <div class="spec-name">Slab serif · structural authority · Clarendon analog</div>
+          <div class="spec-display h5" style="font-size:40px; font-weight:600; letter-spacing:-0.01em;">
+            Aa Bb Cc<br>Dd Ee Ff
+          </div>
+          <div class="spec-alpha h5" style="font-weight:300; font-style:italic;">
+            ABCDEFGHIJKLM<br>abcdefghijklmnop
+          </div>
+        </div>
+        <hr class="spec-divider" />
+        <div class="spec-block">
+          <div class="spec-label">Body — Work Sans</div>
+          <div class="spec-name">Optimized grotesque · neutral · Univers analog</div>
+          <div class="spec-display b5" style="font-size:20px; font-weight:300; letter-spacing:0.05em;">
+            Aa Bb Cc Dd Ee Ff
+          </div>
+          <div class="spec-alpha b5" style="font-weight:300;">
+            ABCDEFGHIJKLMNOP<br>abcdefghijklmnopqrst
+          </div>
+        </div>
+      </div>
+      <div class="mockup">
+        <div class="mock-nav b5">
+          <span class="mock-nav-accent">Work</span><span>About</span><span>Contact</span>
+        </div>
+        <div>
+          <div class="mock-eyebrow b5">Solutions Engineer</div>
+          <div class="mock-hero h5" style="font-size:50px; font-weight:600; letter-spacing:-0.01em;">Preston<br><em style="font-weight:300;">Rank</em></div>
+          <div class="mock-body-text b5" style="font-weight:300;">Building systems at the intersection of product and engineering. Available for select work.</div>
+          <div class="mock-btn">View Work</div>
+        </div>
+        <div class="mock-card">
+          <div class="mock-card-eye b5">Experience</div>
+          <div class="mock-card-title h5" style="font-size:18px; font-weight:600;">Solutions Engineer</div>
+          <div class="mock-card-body b5" style="font-weight:300;">Designing integration patterns for enterprise clients across complex technical environments.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
