@@ -36,6 +36,7 @@ export default function RightPanel({ activeSection, isFirstRender }) {
         {/* ── DEFAULT ── */}
         {!activeSection && (
           <motion.div key="default" className="pane" variants={pane} initial="initial" animate="animate" exit="exit">
+            <div className="pane-bg-pattern" aria-hidden="true" />
             <div className="pane-default-inner">
               <motion.div className="d-eye"    {...stagger(isFirstRender ? 1.1  : 0.05)} >Est. — United States</motion.div>
               <motion.div className="d-line"   {...stagger(isFirstRender ? 1.25 : 0.15)} >

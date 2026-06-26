@@ -10,7 +10,8 @@ Reference files:
 ## 01 — SELECTIONS
 
 ```
-PALETTE  :  PALETTE-C   →  Cold Void (#080A0F bg · #10131A surface · #D8DDE8 text · #4A6A7C accent · #1C2030 secondary)
+PALETTE  :  Custom — "Mist Teal" (override of PALETTE-C)
+            #143842 bg · #1A4854 surface · #D8DDE8 text · #E8DCC0 accent (ivory) · #0D2A33 secondary · #4A6A7C secondary-accent (slate)
 FONT     :  FONT-4      →  Cormorant Garamond (heading) · DM Sans 300 (body) · Fira Code (mono/labels)
 ```
 
@@ -66,7 +67,10 @@ Arc highlights (r=210, ±15° around each node):
   Experience : M 368.7,89.7  A 210,210 0 0,1 452.0,159.6
   Projects   : M 482.8,225.7 A 210,210 0 0,1 482.8,334.3
   About      : M 452.0,400.4 A 210,210 0 0,1 368.7,470.3
-  Style      : stroke accent, stroke-width 2.5, round caps, opacity 0 → 0.55 on active
+  Style      : stroke #E8DCC0 (ivory), stroke-width 2.4, round caps,
+              opacity 0.78 (ambient — softens to 0.5 idle, brightens to 0.9 on active node)
+
+No cyan ring-hugs around the orb. Tight rings removed; arcs alone signal the orb.
 ```
 
 ---
@@ -133,15 +137,68 @@ About:
 ## 08 — GLOBAL DETAILS
 
 ```
-Cursor        :  Custom square (13px, 1px accent border) + 3px dot center
+Cursor        :  Custom square (13px, 1px slate border #4A6A7C) + 3px dot center
                  Expands to 22px when hovering an active node
-Grain overlay :  SVG fractalNoise, 160px tile, opacity 0.026, fixed, z-index 400, pointer-events none
+Grain overlay :  Two-pass cool-light noise, screen blend (not multiply — works against teal)
+                 Pass A (z:60): SVG fractalNoise 320px tile, baseFrequency 0.78, octaves 3,
+                                colorMatrix tinted (0.80, 0.88, 0.98), alpha 0.10, opacity 0.55
+                 Pass B (z:2):  SVG fractalNoise 240px tile, baseFrequency 1.05, octaves 2,
+                                colorMatrix tinted (0.72, 0.82, 0.95), alpha 0.08, opacity 0.40
+                 Both pointer-events: none, mix-blend-mode: screen
 Scroll        :  overflow hidden on html/body — intentional, no scroll
 Animations    :  CSS only for load sequence. JS IntersectionObserver not needed (no scroll).
                  Node interaction via mouseenter/mouseleave JS (~30 lines)
 Border radius :  None — all elements are sharp
-Dividers      :  1px solid var(--border) = rgba(74,106,124,0.14)
-Background    :  No texture beyond grain — pure flat #080A0F
+Dividers      :  1px solid var(--border) = rgba(232,220,192,0.14)  /* ivory at low alpha */
+Background    :  Solid Mist Teal #143842 — flat color, no gradient. Texture is grain only.
+```
+
+---
+
+## 09a — VOID BUBBLES (washed-out billiard potions)
+
+```
+Concept     :  Frutiger-aero glass spheres scattered around the orb, but desaturated
+              and mesh-textured so they read as ghosts of billiard balls drifting
+              through the abyss — never glossy, never decorative.
+
+Placement   :  3 per page (or per panel), absolutely positioned in left panel's
+              negative space. Sizes vary 38–54px. Never overlap the orb.
+
+Geometry    :
+  Shape        : border-radius: 50%, overflow: hidden (so the mesh stays clipped)
+  Rim          : box-shadow
+                   0 0 0 0.5px rgba(255,255,255,0.10),    /* outer rim */
+                   inset 0 0 0 0.5px rgba(255,255,255,0.04), /* inner rim */
+                   inset -4px -6px 14px rgba(0,0,0,0.18)  /* gentle volume */
+  NO outer glow halo. NO bright specular highlight.
+
+Mesh overlay :  Pseudo-element ::after, inset:0, border-radius: 50%, z:1
+                Background: SVG fractalNoise 160px tile, baseFrequency 0.92, octaves 2
+                  colorMatrix tinted (0.78, 0.80, 0.84), alpha 0.58
+                Opacity 0.55, mix-blend-mode: overlay
+                Effect: breaks up any smoothness; reads as worn / faded glass.
+
+Potion gradients (radial-gradient at 35% 30%, all stops <=22% alpha):
+  b8  · charcoal :  (180,185,195,.16) → (120,125,135,.14) 22% → (60,65,75,.18) 55% → (20,22,28,.28) 100%
+  b9  · ochre    :  (200,195,170,.16) → (160,140,90,.16)  30% → (110,95,55,.18) 65% → (70,60,30,.22) 100%
+  b11 · brick    :  (200,180,178,.16) → (155,95,90,.16)   30% → (110,60,55,.18) 65% → (70,35,30,.22) 100%
+  b13 · terracotta: (205,190,170,.16) → (170,120,70,.16)  30% → (115,75,40,.18) 65% → (70,45,22,.22) 100%
+  b14 · sage     :  (190,200,180,.16) → (110,140,100,.16) 30% → (70,100,70,.18) 65% → (40,65,42,.22) 100%
+
+Number glyph (the ball's digit, centered):
+  Font         : Fira Code 400, letter-spacing 0.04em, z:3 (above mesh)
+  Sizes        : scale with bubble (~font-size = bubble-width × 0.42)
+  Colors       :
+    b8  : rgba(220,222,228,0.72) + text-shadow 0 1px 0 rgba(0,0,0,0.40)
+    b9  : rgba(40,32,12,0.78)   + text-shadow 0 1px 0 rgba(220,200,150,0.30)
+    b11 : rgba(45,15,12,0.80)   + text-shadow 0 1px 0 rgba(225,190,185,0.28)
+    b13 : rgba(40,20,8,0.78)    + text-shadow 0 1px 0 rgba(225,200,170,0.28)
+    b14 : rgba(15,30,18,0.80)   + text-shadow 0 1px 0 rgba(200,220,200,0.28)
+
+Pool         :  At least one bubble per panel should be b8. Pair with one or two
+                colored variants (9, 11, 13, 14) — never all the same hue. Aim for
+                tonal balance, not chromatic loudness.
 ```
 
 ---

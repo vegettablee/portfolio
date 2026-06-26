@@ -49,6 +49,9 @@ export default function App() {
         {/* ── LEFT PANEL ── */}
         <div id="left">
 
+          {/* Idle background pattern */}
+          {!activeSection && <div className="pane-bg-pattern" aria-hidden="true" />}
+
           {/* Name block */}
           <motion.div
             id="name-block"

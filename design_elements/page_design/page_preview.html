@@ -1,649 +1,249 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Preston Rank</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400&family=Fira+Code:wght@300;400&display=swap" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Preston Rank — Preview</title>
 
-  <style>
-    :root {
-      --bg:      #080A0F;
-      --surface: #10131A;
-      --text:    #D8DDE8;
-      --accent:  #4A6A7C;
-      --muted:   rgba(216,221,232,0.42);
-      --dim:     rgba(216,221,232,0.17);
-      --border:  rgba(74,106,124,0.14);
-    }
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400&family=Fira+Code:wght@300;400&display=swap" rel="stylesheet">
 
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-    html, body {
-      width: 100%; height: 100%;
-      overflow: hidden;
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      font-weight: 300;
-      -webkit-font-smoothing: antialiased;
-      cursor: none;
-    }
-
-    /* Grain */
-    body::before {
-      content: '';
-      position: fixed; inset: 0;
-      z-index: 400; pointer-events: none;
-      opacity: 0.026;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-      background-size: 160px;
-    }
-
-    /* Custom cursor */
-    #cur {
-      position: fixed;
-      width: 13px; height: 13px;
-      border: 1px solid var(--accent);
-      transform: translate(-50%,-50%);
-      pointer-events: none; z-index: 9999;
-      transition: width .2s, height .2s, border-color .2s;
-    }
-    #cur.expand { width: 22px; height: 22px; border-color: rgba(74,106,124,0.5); }
-    #cur-dot {
-      position: fixed; width: 3px; height: 3px;
-      background: var(--accent); border-radius: 50%;
-      transform: translate(-50%,-50%);
-      pointer-events: none; z-index: 9999;
-    }
-
-    /* ── Two-panel layout ── */
-    #layout {
-      display: grid;
-      grid-template-columns: 54% 46%;
-      height: 100vh;
-    }
-
-    /* ── LEFT PANEL ── */
-    #left {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      padding: 48px 0 36px 52px;
-      overflow: hidden;
-    }
-
-    /* Name */
-    #name-block {
-      position: relative; z-index: 10;
-      opacity: 0;
-      animation: fadeUp .9s ease forwards .15s;
-    }
-
-    .fn, .ln {
-      display: block;
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(44px, 5.5vw, 82px);
-      line-height: .88;
-      letter-spacing: -.025em;
-    }
-    .fn { font-weight: 300; font-style: italic; color: var(--text); }
-    .ln { font-weight: 400; color: var(--muted); }
-
-    /* Circle */
-    #circle-wrap {
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-38%, -50%);
-      width: min(500px, 78%);
-      opacity: 0;
-      animation: fadeIn 1.4s ease forwards .5s;
-    }
-
-    #orbit { width: 100%; height: auto; overflow: visible; }
-
-    /* Rings */
-    .ring { fill: none; stroke: #D8DDE8; }
-    .rs { stroke-width: .5; opacity: .1; }
-    .rd { stroke-width: .5; opacity: .06; stroke-dasharray: 2.5 11; }
-
-    /* Outer rotating ring */
-    #outer {
-      transform-origin: 280px 280px;
-      animation: spin 85s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* Arc highlights (short arcs centred on each node) */
-    .arc {
-      fill: none; stroke: var(--accent);
-      stroke-width: 2.5; stroke-linecap: round;
-      opacity: 0;
-      transition: opacity .45s ease;
-    }
-    .arc.on { opacity: .55; }
-
-    /* Node groups */
-    .node-label {
-      font-family: 'Fira Code', monospace;
-      font-size: 8.5px; fill: var(--muted);
-      letter-spacing: .14em; text-transform: uppercase;
-      transition: fill .3s;
-    }
-    .node-dot {
-      fill: var(--accent); opacity: .5;
-      transition: opacity .3s, r .3s;
-      transform-origin: inherit;
-    }
-    .node-ring {
-      fill: none; stroke: var(--accent); stroke-width: 1;
-      opacity: 0; transition: opacity .35s;
-    }
-    .node-line {
-      stroke: var(--accent); stroke-width: .6; opacity: 0;
-      stroke-dasharray: 120; stroke-dashoffset: 120;
-      transition: stroke-dashoffset .5s ease, opacity .1s;
-    }
-    .node-line.on { stroke-dashoffset: 0; opacity: 1; }
-    .node-trigger { fill: transparent; cursor: none; }
-
-    .node.on .node-label { fill: var(--text); }
-    .node.on .node-dot   { opacity: 1; }
-    .node.on .node-ring  { opacity: .35; }
-
-    /* Divider glow */
-    #divider-glow {
-      position: absolute; top: 0; right: 0;
-      width: 1px; height: 100%;
-      background: linear-gradient(to bottom, transparent 0%, var(--accent) 50%, transparent 100%);
-      opacity: 0; z-index: 5;
-      transition: opacity .5s ease;
-    }
-    #divider-glow.on { opacity: .35; }
-
-    /* Circle center text */
-    .c-label {
-      font-family: 'Fira Code', monospace;
-      font-size: 9px; fill: var(--dim);
-      text-anchor: middle; letter-spacing: .18em;
-    }
-
-    /* ── RIGHT PANEL ── */
-    #right {
-      position: relative;
-      border-left: 1px solid var(--border);
-      overflow: hidden;
-    }
-
-    /* Ghost section number behind content */
-    #ghost-num {
-      position: absolute;
-      bottom: -20px; right: -10px;
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 240px; font-weight: 300;
-      color: var(--text); opacity: 0;
-      line-height: 1; pointer-events: none;
-      user-select: none;
-      transition: opacity .6s ease, transform .6s ease;
-      transform: translateY(10px);
-    }
-    #ghost-num.on { opacity: .025; transform: translateY(0); }
-
-    /* Panes */
-    .pane {
-      position: absolute; inset: 0;
-      padding: 52px 52px 52px 48px;
-      opacity: 0; pointer-events: none;
-      transform: translateX(12px);
-      transition: opacity .45s ease, transform .45s ease;
-      overflow-y: auto;
-      scrollbar-width: none;
-    }
-    .pane::-webkit-scrollbar { display: none; }
-    .pane.on {
-      opacity: 1; pointer-events: all;
-      transform: translateX(0);
-    }
-
-    /* ── DEFAULT pane ── */
-    #pane-default {
-      display: flex; flex-direction: column;
-      justify-content: center; height: 100%;
-    }
-    .d-eye {
-      font-family: 'Fira Code', monospace;
-      font-size: 9px; letter-spacing: .22em;
-      text-transform: uppercase; color: var(--accent);
-      margin-bottom: 28px;
-      opacity: 0; animation: fadeUp .7s ease forwards 1.1s;
-    }
-    .d-line {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(18px, 2.2vw, 28px);
-      font-weight: 300; line-height: 1.6;
-      color: var(--muted); margin-bottom: 36px;
-      opacity: 0; animation: fadeUp .8s ease forwards 1.25s;
-    }
-    .d-line em { font-style: italic; color: var(--text); }
-    .d-hint {
-      font-family: 'Fira Code', monospace;
-      font-size: 9px; letter-spacing: .16em;
-      color: var(--dim); display: flex;
-      align-items: center; gap: 10px;
-      opacity: 0; animation: fadeUp .7s ease forwards 1.5s;
-    }
-    .d-hint::before {
-      content: ''; display: block;
-      width: 24px; height: 1px; background: var(--dim);
-      flex-shrink: 0;
-    }
-    .d-socials {
-      display: flex; gap: 22px; margin-top: 52px;
-      opacity: 0; animation: fadeUp .7s ease forwards 1.7s;
-    }
-    .d-socials a {
-      font-family: 'Fira Code', monospace;
-      font-size: 9px; letter-spacing: .1em;
-      color: var(--accent); text-decoration: none;
-      opacity: .55; transition: opacity .2s;
-    }
-    .d-socials a:hover { opacity: 1; }
-
-    /* ── PANE SHARED ── */
-    .p-label {
-      font-family: 'Fira Code', monospace;
-      font-size: 9px; letter-spacing: .22em;
-      text-transform: uppercase; color: var(--accent);
-      margin-bottom: 44px;
-      display: flex; align-items: center; gap: 12px;
-    }
-    .p-label::after {
-      content: ''; height: 1px; width: 44px;
-      background: var(--border);
-    }
-
-    /* ── EXPERIENCE ── */
-    .e-row {
-      padding: 26px 0;
-      border-bottom: 1px solid var(--border);
-    }
-    .e-row:first-of-type { border-top: 1px solid var(--border); }
-    .e-head {
-      display: flex; justify-content: space-between;
-      align-items: baseline; margin-bottom: 6px;
-    }
-    .e-co {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 26px; font-weight: 400;
-      font-style: italic; color: var(--text);
-    }
-    .e-date {
-      font-family: 'Fira Code', monospace;
-      font-size: 9px; letter-spacing: .08em; color: var(--dim);
-    }
-    .e-role {
-      font-size: 9px; letter-spacing: .16em;
-      text-transform: uppercase; color: var(--accent);
-      margin-bottom: 10px;
-    }
-    .e-desc { font-size: 12px; line-height: 1.85; color: var(--muted); }
-
-    /* ── PROJECTS ── */
-    .p-row {
-      padding: 26px 0;
-      border-bottom: 1px solid var(--border);
-    }
-    .p-row:first-of-type { border-top: 1px solid var(--border); }
-    .p-idx {
-      font-family: 'Fira Code', monospace;
-      font-size: 8px; letter-spacing: .15em; color: var(--dim);
-      margin-bottom: 6px;
-    }
-    .p-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 36px; font-weight: 300;
-      font-style: italic; color: var(--muted);
-      line-height: 1; margin-bottom: 10px;
-      transition: color .3s;
-    }
-    .p-row:hover .p-title { color: var(--text); }
-    .p-desc { font-size: 12px; line-height: 1.85; color: var(--muted); margin-bottom: 14px; }
-    .tags { display: flex; flex-wrap: wrap; gap: 6px; }
-    .tag {
-      font-family: 'Fira Code', monospace;
-      font-size: 8px; letter-spacing: .1em;
-      color: var(--accent);
-      border: 1px solid rgba(74,106,124,0.24);
-      padding: 3px 9px;
-    }
-
-    /* ── ABOUT ── */
-    .a-bio {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 21px; font-weight: 300;
-      line-height: 1.65; color: var(--muted);
-      letter-spacing: .01em; margin-bottom: 44px;
-    }
-    .a-bio em { font-style: italic; color: var(--text); }
-    .a-ilabel {
-      font-family: 'Fira Code', monospace;
-      font-size: 9px; letter-spacing: .22em;
-      text-transform: uppercase; color: var(--accent);
-      margin-bottom: 20px;
-    }
-    .a-list { list-style: none; }
-    .a-list li {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 18px; font-weight: 300;
-      color: var(--muted); padding: 13px 0;
-      border-bottom: 1px solid var(--border);
-      transition: color .2s, padding-left .22s ease;
-    }
-    .a-list li:first-child { border-top: 1px solid var(--border); }
-    .a-list li:hover { color: var(--text); padding-left: 9px; }
-
-    /* ── BOTTOM STRIP ── */
-    #strip {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      height: 34px;
-      display: flex; align-items: center;
-      justify-content: space-between;
-      padding: 0 52px;
-      border-top: 1px solid var(--border);
-      background: rgba(8,10,15,.75);
-      backdrop-filter: blur(8px);
-      z-index: 200;
-      opacity: 0; animation: fadeIn .6s ease forwards 2s;
-    }
-    .strip-l {
-      font-size: 9px; letter-spacing: .15em;
-      text-transform: uppercase; color: var(--dim);
-    }
-    .strip-r {
-      font-family: 'Fira Code', monospace;
-      font-size: 9px; letter-spacing: .08em; color: var(--dim);
-    }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(18px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; } to { opacity: 1; }
-    }
-  </style>
+<link rel="stylesheet" href="page_preview.css">
 </head>
 <body>
 
-  <div id="cur"></div>
-  <div id="cur-dot"></div>
+<!-- ─────────────────────────────────────────────
+     GRAIN PASS A (z:60) — fine cool noise
+     ───────────────────────────────────────────── -->
+<svg class="grain grain-a" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+  <filter id="grainA" x="0" y="0" width="100%" height="100%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.78" numOctaves="3" stitchTiles="stitch" seed="3"/>
+    <feColorMatrix values="0 0 0 0 0.80
+                           0 0 0 0 0.88
+                           0 0 0 0 0.98
+                           0 0 0 0.10 0"/>
+  </filter>
+  <rect width="100%" height="100%" filter="url(#grainA)"/>
+</svg>
 
-  <div id="layout">
+<!-- ─────────────────────────────────────────────
+     STAGE
+     ───────────────────────────────────────────── -->
+<div class="stage">
 
-    <!-- ════ LEFT ════ -->
-    <div id="left">
+  <!-- LEFT PANEL -->
+  <section class="panel panel-left">
+    <h1 class="name">
+      <span class="first">Preston</span>
+      <span class="last">Rank</span>
+    </h1>
 
-      <div id="name-block">
-        <span class="fn">Preston</span>
-        <span class="ln">Rank</span>
-      </div>
-
-      <div id="divider-glow"></div>
-
-      <div id="circle-wrap">
-        <svg id="orbit" viewBox="0 0 560 560" xmlns="http://www.w3.org/2000/svg">
-
-          <!-- Static rings -->
-          <circle class="ring rs" cx="280" cy="280" r="210"/>
-          <circle class="ring rd" cx="280" cy="280" r="175"/>
-          <circle class="ring rs" cx="280" cy="280" r="140"/>
-          <circle class="ring rd" cx="280" cy="280" r="105"/>
-          <circle class="ring rs" cx="280" cy="280" r="68"/>
-
-          <!--
-            Arc segments at r=210, centered at 280,280
-            Experience node at  50° → (414.9, 119.1)
-            Projects node   at   0° → (490.0, 280.0)
-            About node      at -50° → (414.9, 440.9)
-
-            Arc boundaries (±15° around each node):
-            Exp:   65° → 35°   start:(368.7,89.7)  end:(452.0,159.6)
-            Proj:  15° → -15°  start:(482.8,225.7) end:(482.8,334.3)
-            About:-35° → -65°  start:(452.0,400.4) end:(368.7,470.3)
-          -->
-          <path class="arc" id="arc-exp"   d="M 368.7,89.7  A 210,210 0 0,1 452.0,159.6"/>
-          <path class="arc" id="arc-proj"  d="M 482.8,225.7 A 210,210 0 0,1 482.8,334.3"/>
-          <path class="arc" id="arc-about" d="M 452.0,400.4 A 210,210 0 0,1 368.7,470.3"/>
-
-          <!-- Outer rotating ring + circling text -->
-          <g id="outer">
-            <circle class="ring rs" cx="280" cy="280" r="250" opacity=".07"/>
-            <defs>
-              <path id="tp" d="M280,280 m-238,0 a238,238 0 1,1 476,0 a238,238 0 1,1 -476,0"/>
-            </defs>
-            <text font-family="Fira Code,monospace" font-size="8.5" fill="#D8DDE8" opacity=".22" letter-spacing="17.5">
-              <textPath href="#tp">SOLUTIONS ENGINEER · SOFTWARE ENGINEER · SOLUTIONS ENGINEER · SOFTWARE ENGINEER ·</textPath>
-            </text>
-          </g>
-
-          <!-- Center label -->
-          <text class="c-label" x="280" y="276">P · RANK</text>
-          <text class="c-label" x="280" y="291" font-size="8" opacity=".6">2026</text>
-
-          <!-- ── NODE: Experience (50° above right) ── -->
-          <g class="node" id="node-exp" data-section="exp">
-            <circle class="node-ring" cx="414.9" cy="119.1" r="11"/>
-            <circle class="node-dot"  cx="414.9" cy="119.1" r="3.5"/>
-            <!-- Line draws toward right edge -->
-            <line class="node-line" id="line-exp"
-              x1="419" y1="119.1" x2="548" y2="119.1"/>
-            <!-- Label above node -->
-            <text class="node-label" x="414.9" y="107" text-anchor="middle">Experience</text>
-            <circle class="node-trigger" cx="414.9" cy="119.1" r="30"/>
-          </g>
-
-          <!-- ── NODE: Projects (0°, straight right) ── -->
-          <g class="node" id="node-proj" data-section="proj">
-            <circle class="node-ring" cx="490" cy="280" r="11"/>
-            <circle class="node-dot"  cx="490" cy="280" r="3.5"/>
-            <line class="node-line" id="line-proj"
-              x1="494" y1="280" x2="548" y2="280"/>
-            <text class="node-label" x="490" y="268" text-anchor="middle">Projects</text>
-            <circle class="node-trigger" cx="490" cy="280" r="30"/>
-          </g>
-
-          <!-- ── NODE: About (-50°, below right) ── -->
-          <g class="node" id="node-about" data-section="about">
-            <circle class="node-ring" cx="414.9" cy="440.9" r="11"/>
-            <circle class="node-dot"  cx="414.9" cy="440.9" r="3.5"/>
-            <line class="node-line" id="line-about"
-              x1="419" y1="440.9" x2="548" y2="440.9"/>
-            <text class="node-label" x="414.9" y="459" text-anchor="middle">About</text>
-            <circle class="node-trigger" cx="414.9" cy="440.9" r="30"/>
-          </g>
-
+    <!-- Void bubbles · positioned in negative space, never overlapping the orb -->
+    <div class="bubble b-8"  style="width:46px; height:46px; top: 22%; left: 8%;">
+      <div class="swirl"></div>
+      <div class="mesh">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <filter id="meshA">
+            <feTurbulence type="fractalNoise" baseFrequency="0.92" numOctaves="2" seed="2">
+              <animate attributeName="seed" from="2" to="80" dur="16s" repeatCount="indefinite"/>
+              <animate attributeName="baseFrequency" values="0.88;0.96;0.88" dur="9s" repeatCount="indefinite"/>
+            </feTurbulence>
+            <feColorMatrix values="0 0 0 0 0.78
+                                   0 0 0 0 0.80
+                                   0 0 0 0 0.84
+                                   0 0 0 0.58 0"/>
+          </filter>
+          <rect width="100%" height="100%" filter="url(#meshA)"/>
         </svg>
       </div>
+      <div class="digit" style="font-size: 19px;">8</div>
     </div>
 
-    <!-- ════ RIGHT ════ -->
-    <div id="right">
-
-      <!-- Faded section number behind content -->
-      <div id="ghost-num">01</div>
-
-      <!-- Default -->
-      <div class="pane on" id="pane-default">
-        <div style="height:100%;display:flex;flex-direction:column;justify-content:center;">
-          <div class="d-eye">Est. — United States</div>
-          <div class="d-line">
-            Building systems at the intersection of<br><em>product and engineering.</em>
-          </div>
-          <div class="d-hint">approach the circle to explore</div>
-          <div class="d-socials">
-            <a href="#">LinkedIn ↗</a>
-            <a href="#">GitHub ↗</a>
-            <a href="#">prestonrank5@gmail.com</a>
-          </div>
-        </div>
+    <div class="bubble b-13 delay-1" style="width:52px; height:52px; top: 68%; left: 14%;">
+      <div class="swirl"></div>
+      <div class="mesh">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <filter id="meshB">
+            <feTurbulence type="fractalNoise" baseFrequency="0.90" numOctaves="2" seed="11">
+              <animate attributeName="seed" from="11" to="120" dur="19s" repeatCount="indefinite"/>
+              <animate attributeName="baseFrequency" values="0.86;0.98;0.86" dur="11s" repeatCount="indefinite"/>
+            </feTurbulence>
+            <feColorMatrix values="0 0 0 0 0.78
+                                   0 0 0 0 0.80
+                                   0 0 0 0 0.84
+                                   0 0 0 0.58 0"/>
+          </filter>
+          <rect width="100%" height="100%" filter="url(#meshB)"/>
+        </svg>
       </div>
-
-      <!-- Experience -->
-      <div class="pane" id="pane-exp">
-        <div class="p-label">01 — Experience</div>
-
-        <div class="e-row">
-          <div class="e-head">
-            <span class="e-co">Salesforce</span>
-            <span class="e-date">2023 — Present</span>
-          </div>
-          <div class="e-role">Solutions Engineer</div>
-          <div class="e-desc">Architecting integration solutions for enterprise clients across the AMER region. Translating complex technical requirements into scalable system designs that reduce friction between product and infrastructure.</div>
-        </div>
-
-        <div class="e-row">
-          <div class="e-head">
-            <span class="e-co">Flexe</span>
-            <span class="e-date">2021 — 2023</span>
-          </div>
-          <div class="e-role">Software Engineer</div>
-          <div class="e-desc">Built internal tooling and API infrastructure for a distributed logistics platform. Owned the full lifecycle of several internal products from architecture through deployment.</div>
-        </div>
-
-        <div class="e-row">
-          <div class="e-head">
-            <span class="e-co">Independent</span>
-            <span class="e-date">2019 — 2021</span>
-          </div>
-          <div class="e-role">Full-Stack Developer</div>
-          <div class="e-desc">Developed client-facing web applications across e-commerce and media verticals. End-to-end ownership from scoping to production.</div>
-        </div>
-      </div>
-
-      <!-- Projects -->
-      <div class="pane" id="pane-proj">
-        <div class="p-label">02 — Projects</div>
-
-        <div class="p-row">
-          <div class="p-idx">001</div>
-          <div class="p-title">Meridian</div>
-          <div class="p-desc">Developer tool for visualizing API dependency graphs in real time. Surfaces hidden coupling in distributed service architectures before it becomes a production problem.</div>
-          <div class="tags">
-            <span class="tag">React</span><span class="tag">Node.js</span>
-            <span class="tag">WebSocket</span><span class="tag">D3</span>
-          </div>
-        </div>
-
-        <div class="p-row">
-          <div class="p-idx">002</div>
-          <div class="p-title">Stratum</div>
-          <div class="p-desc">Data pipeline orchestration dashboard for internal analytics teams. Makes complex ETL workflows legible to non-engineers without sacrificing depth.</div>
-          <div class="tags">
-            <span class="tag">Python</span><span class="tag">React</span><span class="tag">PostgreSQL</span>
-          </div>
-        </div>
-
-        <div class="p-row">
-          <div class="p-idx">003</div>
-          <div class="p-title">Folio</div>
-          <div class="p-desc">Lightweight portfolio scaffolding CLI for engineers. Generates an opinionated project structure from a single config file.</div>
-          <div class="tags">
-            <span class="tag">TypeScript</span><span class="tag">CLI</span><span class="tag">Open Source</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- About -->
-      <div class="pane" id="pane-about">
-        <div class="p-label">03 — About</div>
-        <div class="a-bio">
-          I build systems at the intersection of <em>product and engineering</em> — translating complexity into things that work and make sense. By day a solutions engineer, by night drawn to fashion archives, type, and the logic of cities.
-        </div>
-        <div class="a-ilabel">Interests</div>
-        <ul class="a-list">
-          <li>Fashion archives &amp; editorial</li>
-          <li>Type design &amp; typography</li>
-          <li>Urban photography</li>
-          <li>Distance running</li>
-          <li>Systems thinking</li>
-        </ul>
-      </div>
-
+      <div class="digit" style="font-size: 22px;">13</div>
     </div>
-  </div>
 
-  <!-- Bottom strip -->
-  <div id="strip">
-    <span class="strip-l">Solutions Engineer · Software Engineer</span>
-    <span class="strip-r">© 2026 Preston Rank</span>
-  </div>
+    <div class="bubble b-14 delay-2" style="width:40px; height:40px; top: 80%; left: 38%;">
+      <div class="swirl"></div>
+      <div class="mesh">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <filter id="meshC">
+            <feTurbulence type="fractalNoise" baseFrequency="0.95" numOctaves="2" seed="7">
+              <animate attributeName="seed" from="7" to="95" dur="14s" repeatCount="indefinite"/>
+              <animate attributeName="baseFrequency" values="0.92;1.02;0.92" dur="10s" repeatCount="indefinite"/>
+            </feTurbulence>
+            <feColorMatrix values="0 0 0 0 0.78
+                                   0 0 0 0 0.80
+                                   0 0 0 0 0.84
+                                   0 0 0 0.58 0"/>
+          </filter>
+          <rect width="100%" height="100%" filter="url(#meshC)"/>
+        </svg>
+      </div>
+      <div class="digit" style="font-size: 17px;">14</div>
+    </div>
 
-  <script>
-    // ── Cursor ──
-    const cur = document.getElementById('cur');
-    const dot = document.getElementById('cur-dot');
-    document.addEventListener('mousemove', e => {
-      cur.style.left = e.clientX + 'px';
-      cur.style.top  = e.clientY + 'px';
-      dot.style.left = e.clientX + 'px';
-      dot.style.top  = e.clientY + 'px';
+    <!-- ORB -->
+    <div class="orb-wrap">
+      <svg viewBox="0 0 560 560" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <path id="textCircle" d="M 280,280 m -250,0 a 250,250 0 1,1 500,0 a 250,250 0 1,1 -500,0"/>
+        </defs>
+
+        <!-- Static rings -->
+        <g fill="none" stroke="#E8DCC0">
+          <circle cx="280" cy="280" r="210" stroke-opacity="0.10"/>
+          <circle cx="280" cy="280" r="175" stroke-opacity="0.07" stroke-dasharray="2 6"/>
+          <circle cx="280" cy="280" r="140" stroke-opacity="0.09"/>
+          <circle cx="280" cy="280" r="105" stroke-opacity="0.06" stroke-dasharray="2 6"/>
+          <circle cx="280" cy="280" r="68"  stroke-opacity="0.08"/>
+        </g>
+
+        <!-- Rotating outer ring + text path -->
+        <g class="ring-rotate">
+          <circle cx="280" cy="280" r="250" fill="none" stroke="#E8DCC0" stroke-opacity="0.18"/>
+          <text font-family="Fira Code, monospace" font-size="8.5" fill="#E8DCC0" fill-opacity="0.22" letter-spacing="0.34em">
+            <textPath href="#textCircle" startOffset="0">
+              SOLUTIONS ENGINEER · SOFTWARE ENGINEER · SOLUTIONS ENGINEER · SOFTWARE ENGINEER ·
+            </textPath>
+          </text>
+        </g>
+
+        <!-- Arc highlights (ambient) -->
+        <g fill="none" stroke="#E8DCC0" stroke-width="2.4" stroke-linecap="round">
+          <path class="arc-hi" data-arc="experience" d="M 368.7,89.7  A 210,210 0 0,1 452.0,159.6"/>
+          <path class="arc-hi" data-arc="projects"   d="M 482.8,225.7 A 210,210 0 0,1 482.8,334.3"/>
+          <path class="arc-hi" data-arc="about"      d="M 452.0,400.4 A 210,210 0 0,1 368.7,470.3"/>
+        </g>
+
+        <!-- Center text -->
+        <text x="280" y="276" text-anchor="middle" font-family="Fira Code, monospace" font-size="7.5"
+              fill="#E8DCC0" fill-opacity="0.32" letter-spacing="0.34em">P · RANK</text>
+        <text x="280" y="290" text-anchor="middle" font-family="Fira Code, monospace" font-size="7.5"
+              fill="#E8DCC0" fill-opacity="0.18" letter-spacing="0.34em">2026</text>
+
+        <!-- Node: Experience (50° above) -->
+        <g class="node-group" data-node="experience">
+          <line class="node-line" x1="414.9" y1="119.1" x2="548" y2="119.1"
+                stroke="#E8DCC0" stroke-width="1"/>
+          <circle class="node-ring" cx="414.9" cy="119.1" r="11" fill="none"
+                  stroke="#E8DCC0" stroke-width="1" opacity="0"/>
+          <circle class="node-dot"  cx="414.9" cy="119.1" r="3.5" fill="#E8DCC0" opacity="0.5"/>
+          <text class="node-label" x="430" y="113" font-family="Fira Code, monospace"
+                font-size="8.5" fill="#8FA0AC" opacity="0.7" letter-spacing="0.14em">EXPERIENCE</text>
+          <circle cx="414.9" cy="119.1" r="30" fill="transparent" class="node-hit"/>
+        </g>
+
+        <!-- Node: Projects (0°) -->
+        <g class="node-group" data-node="projects">
+          <line class="node-line" x1="490" y1="280" x2="548" y2="280"
+                stroke="#E8DCC0" stroke-width="1"/>
+          <circle class="node-ring" cx="490" cy="280" r="11" fill="none"
+                  stroke="#E8DCC0" stroke-width="1" opacity="0"/>
+          <circle class="node-dot"  cx="490" cy="280" r="3.5" fill="#E8DCC0" opacity="0.5"/>
+          <text class="node-label" x="505" y="284" font-family="Fira Code, monospace"
+                font-size="8.5" fill="#8FA0AC" opacity="0.7" letter-spacing="0.14em">PROJECTS</text>
+          <circle cx="490" cy="280" r="30" fill="transparent" class="node-hit"/>
+        </g>
+
+        <!-- Node: About (-50°) -->
+        <g class="node-group" data-node="about">
+          <line class="node-line" x1="414.9" y1="440.9" x2="548" y2="440.9"
+                stroke="#E8DCC0" stroke-width="1"/>
+          <circle class="node-ring" cx="414.9" cy="440.9" r="11" fill="none"
+                  stroke="#E8DCC0" stroke-width="1" opacity="0"/>
+          <circle class="node-dot"  cx="414.9" cy="440.9" r="3.5" fill="#E8DCC0" opacity="0.5"/>
+          <text class="node-label" x="430" y="445" font-family="Fira Code, monospace"
+                font-size="8.5" fill="#8FA0AC" opacity="0.7" letter-spacing="0.14em">ABOUT</text>
+          <circle cx="414.9" cy="440.9" r="30" fill="transparent" class="node-hit"/>
+        </g>
+      </svg>
+    </div>
+  </section>
+
+  <!-- DIVIDER GLOW -->
+  <div class="divider"></div>
+
+  <!-- RIGHT PANEL · default state -->
+  <section class="panel panel-right">
+    <div class="pane-default">
+      <div class="eyebrow">Est. — United States</div>
+      <p class="headline">
+        Building systems at the intersection of <em>product and engineering</em>.
+      </p>
+      <div class="hint">approach the circle to explore</div>
+      <div class="socials">
+        <a href="#">LinkedIn ↗</a>
+        <a href="#">GitHub ↗</a>
+        <a href="#">Email</a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- BOTTOM STRIP -->
+<footer class="footer">
+  <span>Solutions Engineer · Software Engineer</span>
+  <span>© 2026 P. RANK</span>
+</footer>
+
+<!-- GRAIN PASS B (z:2) — coarser warm-tinted -->
+<svg class="grain grain-b" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+  <filter id="grainB" x="0" y="0" width="100%" height="100%">
+    <feTurbulence type="fractalNoise" baseFrequency="1.05" numOctaves="2" stitchTiles="stitch" seed="9"/>
+    <feColorMatrix values="0 0 0 0 0.72
+                           0 0 0 0 0.82
+                           0 0 0 0 0.95
+                           0 0 0 0.08 0"/>
+  </filter>
+  <rect width="100%" height="100%" filter="url(#grainB)"/>
+</svg>
+
+<!-- CURSOR -->
+<div class="cursor" id="cursor"></div>
+
+<script>
+  const cur = document.getElementById('cursor');
+  window.addEventListener('mousemove', (e) => {
+    cur.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%,-50%)`;
+  });
+
+  const groups = document.querySelectorAll('.node-group');
+  const arcs   = document.querySelectorAll('.arc-hi');
+
+  groups.forEach((g) => {
+    const hit  = g.querySelector('.node-hit');
+    const name = g.dataset.node;
+    hit.addEventListener('mouseenter', () => {
+      g.classList.add('is-active');
+      arcs.forEach((a) => {
+        a.style.opacity = a.dataset.arc === name ? 0.9 : 0.5;
+      });
+      cur.classList.add('is-large');
     });
-
-    // ── Section map ──
-    const map = {
-      exp:   { arc: 'arc-exp',   pane: 'pane-exp',   ghost: '01' },
-      proj:  { arc: 'arc-proj',  pane: 'pane-proj',  ghost: '02' },
-      about: { arc: 'arc-about', pane: 'pane-about', ghost: '03' },
-    };
-
-    const nodes    = document.querySelectorAll('.node');
-    const panes    = document.querySelectorAll('.pane');
-    const arcs     = document.querySelectorAll('.arc');
-    const lines    = document.querySelectorAll('.node-line');
-    const glow     = document.getElementById('divider-glow');
-    const ghost    = document.getElementById('ghost-num');
-
-    function activate(section) {
-      const m = map[section];
-      // Panes
-      panes.forEach(p => p.classList.remove('on'));
-      document.getElementById(m.pane).classList.add('on');
-      // Nodes
-      nodes.forEach(n => n.classList.remove('on'));
-      document.getElementById('node-' + section).classList.add('on');
-      // Arcs
-      arcs.forEach(a => a.classList.remove('on'));
-      document.getElementById(m.arc).classList.add('on');
-      // Lines
-      lines.forEach(l => l.classList.remove('on'));
-      document.getElementById('line-' + section).classList.add('on');
-      // Glow
-      glow.classList.add('on');
-      // Ghost number
-      ghost.textContent = m.ghost;
-      ghost.classList.add('on');
-      // Cursor expand
-      cur.classList.add('expand');
-    }
-
-    function reset() {
-      panes.forEach(p => p.classList.remove('on'));
-      document.getElementById('pane-default').classList.add('on');
-      nodes.forEach(n => n.classList.remove('on'));
-      arcs.forEach(a => a.classList.remove('on'));
-      lines.forEach(l => l.classList.remove('on'));
-      glow.classList.remove('on');
-      ghost.classList.remove('on');
-      cur.classList.remove('expand');
-    }
-
-    nodes.forEach(node => {
-      node.addEventListener('mouseenter', () => activate(node.dataset.section));
+    hit.addEventListener('mouseleave', () => {
+      g.classList.remove('is-active');
+      arcs.forEach((a) => { a.style.opacity = ''; });
+      cur.classList.remove('is-large');
     });
-
-    document.getElementById('circle-wrap').addEventListener('mouseleave', reset);
-  </script>
+  });
+</script>
 </body>
 </html>

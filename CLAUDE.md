@@ -47,9 +47,7 @@ Previous build: portfolio/src/ (existing implementation)
 Preserve everything not listed below. Do not rebuild.
 
 Changes this iteration:
-  - using the circle outline, use this as something that exists as an object, because right now the scarfs are draping through the circle, but if you can make the outline of a circle something that is recognized by the physics engine, it would look nicer and interesting
-  - notes about the scarf, make the scarf lines thinner, and inside of each line should be a small black line implied with two white lines on both sides, so it looks like there is a black space in between, but you can only tell by the white lines 
-
+  - add the pattern called pattern_portfolio_1 to overlay in the background 
 
 ```
 
