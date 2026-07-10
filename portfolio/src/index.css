@@ -52,7 +52,21 @@ body::before {
   background: var(--accent); border-radius: 50%;
   pointer-events: none; z-index: 9999;
   will-change: transform;
+  transition: opacity .18s ease;
 }
+#cur-dot.hide { opacity: 0; }
+
+#cur-ace {
+  position: fixed;
+  top: 0; left: 0;
+  width: 12px; height: 12px;
+  pointer-events: none; z-index: 9999;
+  will-change: transform;
+  opacity: 0;
+  background: transparent;
+  transition: opacity .22s ease;
+}
+#cur-ace.show { opacity: 1; }
 
 /* ── Two-panel layout ── */
 #layout {
@@ -77,12 +91,12 @@ body::before {
 
 .fn, .ln {
   display: block;
-  font-family: 'Frank Ruhl Libre', serif;
+  font-family: inherit;
   font-size: clamp(44px, 5.5vw, 82px);
   line-height: .88;
   letter-spacing: -.025em;
 }
-.fn { font-weight: 300; font-style: italic; color: var(--text); }
+.fn { font-weight: 300; font-style: italic; color: #FFFEDE; }
 .ln { font-weight: 400; color: var(--muted); }
 
 /* Circle */
@@ -119,6 +133,12 @@ body::before {
   opacity: 0.10;
   mix-blend-mode: luminosity;
 }
+.particle-canvas {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
 
 #orbit { width: 100%; height: auto; overflow: visible; }
 
@@ -147,6 +167,7 @@ body::before {
   font-size: 13px; fill: var(--muted);
   letter-spacing: .14em;
   transition: fill .3s;
+  pointer-events: none;
 }
 .node-dot {
   fill: var(--accent); opacity: .5;
@@ -216,6 +237,122 @@ body::before {
   scrollbar-width: none;
 }
 .pane::-webkit-scrollbar { display: none; }
+
+/* Pane variant that flexes its child (used by framed sections) */
+.pane-flex {
+  display: flex;
+  flex-direction: column;
+  padding-top: 55px;
+}
+
+/* Experience section frame (CSS container + corner overlays) */
+.exp-frame {
+  position: relative;
+  flex: 0 0 auto;
+  align-self: stretch;
+  aspect-ratio: 706 / 642;
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(4, 24, 24, 0.8);
+  padding: 60px 40px 40px 40px;
+}
+.corner {
+  position: absolute;
+  width: 15px; height: 17px;
+  pointer-events: none;
+  user-select: none;
+}
+.corner-tl { top: 0; left: 0; }
+.corner-tr { top: 0; right: 0; }
+.corner-bl { bottom: 0; left: 0; }
+.corner-br { bottom: 0; right: 0; }
+
+.exp-card-wrap {
+  position: relative;
+  width: 589px;
+  height: 214px;
+}
+.exp-card {
+  position: absolute;
+  width: 589px;
+  height: 214px;
+  border: 1px solid #646464;
+  box-sizing: border-box;
+}
+.exp-card-front { background: #0C4745; top: 0; left: 0; z-index: 2; }
+.exp-card-back  {
+  background: transparent;
+  top: 14px; left: 14px;
+  z-index: 1;
+  transition: background-color .25s ease;
+}
+.exp-card-wrap:hover .exp-card-back { background: #2A2A2A; }
+
+.exp-status {
+  position: absolute;
+  top: 14px; right: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.exp-status-text {
+  font-family: 'Frank Ruhl Libre', serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 1;
+  color: #ADADAD;
+}
+.exp-status-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #4CD964;
+  border: 1px solid #000;
+}
+
+.exp-card-title {
+  position: absolute;
+  top: 18px; left: 20px;
+  margin: 0;
+  font-family: 'Frank Ruhl Libre', serif;
+  font-weight: 500;
+  font-size: 25px;
+  line-height: 1.1;
+  color: #FFFEDE;
+}
+.exp-card-preview {
+  position: absolute;
+  top: 90px; left: 20px;
+  margin: 0;
+  font-family: 'Frank Ruhl Libre', serif;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #ADADAD;
+  max-width: 380px;
+}
+
+.exp-title {
+  position: absolute;
+  top: 0;
+  left: 30px;
+  transform: translateY(-50%);
+  font-family: 'Frank Ruhl Libre', serif;
+  font-weight: 400;
+  font-size: 26px;
+  line-height: 1;
+  color: #FFFEDE;
+  white-space: nowrap;
+}
+.exp-frame-inner {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.exp-frame-inner::-webkit-scrollbar { display: none; }
 
 /* ── DEFAULT pane ── */
 .pane-bg-pattern {

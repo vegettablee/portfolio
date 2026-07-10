@@ -1,0 +1,16 @@
+{
+  "groups": {
+    "nameplate": {
+      "family": "Fraunces",
+      "weight": 600,
+      "style": "normal",
+      "fallback": "'Frank Ruhl Libre', serif"
+    },
+    "section_detail": {
+      "family": "Cormorant Garamond",
+      "weight": 400,
+      "style": "normal",
+      "fallback": "serif"
+    }
+  }
+}

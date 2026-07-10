@@ -1,0 +1,46 @@
+{
+  "items": [
+    {
+      "id": "meridian",
+      "active": true,
+      "display": true,
+      "order": 1,
+      "title": "Meridian",
+      "dates": "",
+      "content": [
+        "Developer tool for visualizing API dependency graphs in real time. Surfaces hidden coupling in distributed service architectures before it becomes a production problem."
+      ],
+      "images": [],
+      "links": [],
+      "tech_stack": ["React", "Node.js", "WebSocket", "D3"]
+    },
+    {
+      "id": "stratum",
+      "active": true,
+      "display": true,
+      "order": 2,
+      "title": "Stratum",
+      "dates": "",
+      "content": [
+        "Data pipeline orchestration dashboard for internal analytics teams. Makes complex ETL workflows legible to non-engineers without sacrificing depth."
+      ],
+      "images": [],
+      "links": [],
+      "tech_stack": ["Python", "React", "PostgreSQL"]
+    },
+    {
+      "id": "folio",
+      "active": true,
+      "display": true,
+      "order": 3,
+      "title": "Folio",
+      "dates": "",
+      "content": [
+        "Lightweight portfolio scaffolding CLI for engineers. Generates an opinionated project structure from a single config file."
+      ],
+      "images": [],
+      "links": [],
+      "tech_stack": ["TypeScript", "CLI", "Open Source"]
+    }
+  ]
+}

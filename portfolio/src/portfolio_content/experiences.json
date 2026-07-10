@@ -1,0 +1,52 @@
+{
+  "items": [
+    {
+      "id": "salesforce",
+      "active": true,
+      "display": true,
+      "order": 1,
+      "title": "Salesforce",
+      "role": "Solutions Engineer",
+      "dates": "2023 — Present",
+      "preview_desc": "",
+      "content": [
+        "Architecting integration solutions for enterprise clients across the AMER region. Translating complex technical requirements into scalable system designs that reduce friction between product and infrastructure."
+      ],
+      "images": [],
+      "links": [],
+      "tech_stack": []
+    },
+    {
+      "id": "flexe",
+      "active": true,
+      "display": true,
+      "order": 2,
+      "title": "Flexe",
+      "role": "Software Engineer",
+      "dates": "2021 — 2023",
+      "preview_desc": "",
+      "content": [
+        "Built internal tooling and API infrastructure for a distributed logistics platform. Owned the full lifecycle of several internal products from architecture through deployment."
+      ],
+      "images": [],
+      "links": [],
+      "tech_stack": []
+    },
+    {
+      "id": "independent",
+      "active": true,
+      "display": true,
+      "order": 3,
+      "title": "Independent",
+      "role": "Full-Stack Developer",
+      "dates": "2019 — 2021",
+      "preview_desc": "",
+      "content": [
+        "Developed client-facing web applications across e-commerce and media verticals. End-to-end ownership from scoping to production."
+      ],
+      "images": [],
+      "links": [],
+      "tech_stack": []
+    }
+  ]
+}

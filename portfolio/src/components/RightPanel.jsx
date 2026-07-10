@@ -1,4 +1,11 @@
 import { AnimatePresence, motion } from 'framer-motion'
+import projectsData from '../portfolio_content/projects.json'
+import experiencesData from '../portfolio_content/experiences.json'
+import ExperienceCard from './ExperienceCard'
+import cornerTL from '../assets/top_left_corner.svg'
+import cornerTR from '../assets/top_right_corner.svg'
+import cornerBL from '../assets/bottom_left_corner.svg'
+import cornerBR from '../assets/bottom_right_corner.svg'
 
 const pane = {
   initial:  { opacity: 0, x: 12 },
@@ -11,15 +18,24 @@ const stagger = (delay) => ({
   animate:  { opacity: 1, y: 0,  transition: { duration: 0.7, delay, ease: 'easeOut' } },
 })
 
+const visibleSorted = (items) =>
+  items
+    .filter(i => i.active && i.display)
+    .sort((a, b) => a.order - b.order)
+
 export default function RightPanel({ activeSection, isFirstRender }) {
   const ghostNum = activeSection === 'exp' ? '01'
     : activeSection === 'proj'  ? '02'
     : activeSection === 'about' ? '03'
     : '01'
 
+  const experiences = visibleSorted(experiencesData.items)
+  const projects = visibleSorted(projectsData.items)
+
   return (
     <>
-      {/* Ghost section number */}
+      <div className="pane-bg-pattern" aria-hidden="true" />
+
       <motion.div
         id="ghost-num"
         animate={{
@@ -33,10 +49,8 @@ export default function RightPanel({ activeSection, isFirstRender }) {
 
       <AnimatePresence mode="wait">
 
-        {/* ── DEFAULT ── */}
         {!activeSection && (
           <motion.div key="default" className="pane" variants={pane} initial="initial" animate="animate" exit="exit">
-            <div className="pane-bg-pattern" aria-hidden="true" />
             <div className="pane-default-inner">
               <motion.div className="d-eye"    {...stagger(isFirstRender ? 1.1  : 0.05)} >Est. — United States</motion.div>
               <motion.div className="d-line"   {...stagger(isFirstRender ? 1.25 : 0.15)} >
@@ -52,82 +66,44 @@ export default function RightPanel({ activeSection, isFirstRender }) {
           </motion.div>
         )}
 
-        {/* ── EXPERIENCE ── */}
         {activeSection === 'exp' && (
-          <motion.div key="exp" className="pane" variants={pane} initial="initial" animate="animate" exit="exit">
-            <div className="p-label">01 — Experience</div>
-
-            <div className="e-row">
-              <div className="e-head">
-                <span className="e-co">Salesforce</span>
-                <span className="e-date">2023 — Present</span>
+          <motion.div key="exp" className="pane pane-flex" variants={pane} initial="initial" animate="animate" exit="exit">
+            <div className="exp-frame">
+              <img src={cornerTL} className="corner corner-tl" aria-hidden="true" alt="" />
+              <img src={cornerTR} className="corner corner-tr" aria-hidden="true" alt="" />
+              <img src={cornerBL} className="corner corner-bl" aria-hidden="true" alt="" />
+              <img src={cornerBR} className="corner corner-br" aria-hidden="true" alt="" />
+              <span className="exp-title">experience</span>
+              <div className="exp-frame-inner">
+                <ExperienceCard />
               </div>
-              <div className="e-role">Solutions Engineer</div>
-              <div className="e-desc">Architecting integration solutions for enterprise clients across the AMER region. Translating complex technical requirements into scalable system designs that reduce friction between product and infrastructure.</div>
-            </div>
-
-            <div className="e-row">
-              <div className="e-head">
-                <span className="e-co">Flexe</span>
-                <span className="e-date">2021 — 2023</span>
-              </div>
-              <div className="e-role">Software Engineer</div>
-              <div className="e-desc">Built internal tooling and API infrastructure for a distributed logistics platform. Owned the full lifecycle of several internal products from architecture through deployment.</div>
-            </div>
-
-            <div className="e-row">
-              <div className="e-head">
-                <span className="e-co">Independent</span>
-                <span className="e-date">2019 — 2021</span>
-              </div>
-              <div className="e-role">Full-Stack Developer</div>
-              <div className="e-desc">Developed client-facing web applications across e-commerce and media verticals. End-to-end ownership from scoping to production.</div>
             </div>
           </motion.div>
         )}
 
-        {/* ── PROJECTS ── */}
         {activeSection === 'proj' && (
           <motion.div key="proj" className="pane" variants={pane} initial="initial" animate="animate" exit="exit">
             <div className="p-label">02 — Projects</div>
 
-            <div className="p-row">
-              <div className="p-idx">001</div>
-              <div className="p-title">Meridian</div>
-              <div className="p-desc">Developer tool for visualizing API dependency graphs in real time. Surfaces hidden coupling in distributed service architectures before it becomes a production problem.</div>
-              <div className="tags">
-                <span className="tag">React</span>
-                <span className="tag">Node.js</span>
-                <span className="tag">WebSocket</span>
-                <span className="tag">D3</span>
+            {projects.map((item, idx) => (
+              <div key={item.id} className="p-row">
+                <div className="p-idx">{String(idx + 1).padStart(3, '0')}</div>
+                <div className="p-title">{item.title}</div>
+                {item.content.map((p, i) => (
+                  <div key={i} className="p-desc">{p}</div>
+                ))}
+                {item.tech_stack.length > 0 && (
+                  <div className="tags">
+                    {item.tech_stack.map(t => (
+                      <span key={t} className="tag">{t}</span>
+                    ))}
+                  </div>
+                )}
               </div>
-            </div>
-
-            <div className="p-row">
-              <div className="p-idx">002</div>
-              <div className="p-title">Stratum</div>
-              <div className="p-desc">Data pipeline orchestration dashboard for internal analytics teams. Makes complex ETL workflows legible to non-engineers without sacrificing depth.</div>
-              <div className="tags">
-                <span className="tag">Python</span>
-                <span className="tag">React</span>
-                <span className="tag">PostgreSQL</span>
-              </div>
-            </div>
-
-            <div className="p-row">
-              <div className="p-idx">003</div>
-              <div className="p-title">Folio</div>
-              <div className="p-desc">Lightweight portfolio scaffolding CLI for engineers. Generates an opinionated project structure from a single config file.</div>
-              <div className="tags">
-                <span className="tag">TypeScript</span>
-                <span className="tag">CLI</span>
-                <span className="tag">Open Source</span>
-              </div>
-            </div>
+            ))}
           </motion.div>
         )}
 
-        {/* ── ABOUT ── */}
         {activeSection === 'about' && (
           <motion.div key="about" className="pane" variants={pane} initial="initial" animate="animate" exit="exit">
             <div className="p-label">03 — About</div>

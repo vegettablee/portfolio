@@ -1,13 +1,15 @@
 import eightBall from '../8_ball_no_background.png'
+import ParticleField from './ParticleField'
 
 export default function Circle({ activeSection, lockedSection, onActivate, onReset, onLock }) {
   const is     = (s) => activeSection === s
   const locked = (s) => lockedSection === s
 
   return (
-    <div id="circle-wrap" onMouseLeave={onReset}>
+    <div id="circle-wrap">
       <div className="eightball-wrap" aria-hidden="true">
         <img src={eightBall} className="eightball-img" alt="" />
+        <ParticleField />
       </div>
       <svg id="orbit" viewBox="0 0 560 560" xmlns="http://www.w3.org/2000/svg">
 
@@ -30,6 +32,7 @@ export default function Circle({ activeSection, lockedSection, onActivate, onRes
         <g
           className={`node${is('exp') ? ' on' : ''}${locked('exp') ? ' locked' : ''}`}
           onMouseEnter={() => onActivate('exp')}
+          onMouseLeave={onReset}
           onClick={() => onLock('exp')}
           style={{ cursor: 'pointer' }}
         >
@@ -47,6 +50,7 @@ export default function Circle({ activeSection, lockedSection, onActivate, onRes
         <g
           className={`node${is('proj') ? ' on' : ''}${locked('proj') ? ' locked' : ''}`}
           onMouseEnter={() => onActivate('proj')}
+          onMouseLeave={onReset}
           onClick={() => onLock('proj')}
           style={{ cursor: 'pointer' }}
         >
@@ -64,6 +68,7 @@ export default function Circle({ activeSection, lockedSection, onActivate, onRes
         <g
           className={`node${is('about') ? ' on' : ''}${locked('about') ? ' locked' : ''}`}
           onMouseEnter={() => onActivate('about')}
+          onMouseLeave={onReset}
           onClick={() => onLock('about')}
           style={{ cursor: 'pointer' }}
         >

@@ -2,6 +2,10 @@ import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import Circle from './components/Circle'
 import RightPanel from './components/RightPanel'
+import fonts from './portfolio_content/fonts.json'
+import aceSymbol from './assets/ace_symbol.svg'
+
+const nameplateFont = `'${fonts.groups.nameplate.family}', ${fonts.groups.nameplate.fallback}`
 
 export default function App() {
   const [hoverSection,  setHoverSection]  = useState(null)
@@ -9,6 +13,7 @@ export default function App() {
   const [isFirstRender, setIsFirstRender] = useState(true)
   const curRef = useRef(null)
   const dotRef = useRef(null)
+  const aceRef = useRef(null)
 
   const activeSection = lockedSection || hoverSection
 
@@ -20,6 +25,8 @@ export default function App() {
         curRef.current.style.transform = `translate(${x - 6.5}px, ${y - 6.5}px)`
       if (dotRef.current)
         dotRef.current.style.transform = `translate(${x - 1.5}px, ${y - 1.5}px)`
+      if (aceRef.current)
+        aceRef.current.style.transform = `translate(${x - 1.5}px, ${y - 1.5}px)`
     }
     document.addEventListener('mousemove', handleMove)
     return () => document.removeEventListener('mousemove', handleMove)
@@ -41,7 +48,15 @@ export default function App() {
     <>
       {/* Custom cursor */}
       <div ref={curRef} id="cur" className={activeSection ? 'expand' : ''} />
-      <div ref={dotRef} id="cur-dot" />
+      <div ref={dotRef} id="cur-dot" className={activeSection ? 'hide' : ''} />
+      <img
+        ref={aceRef}
+        src={aceSymbol}
+        id="cur-ace"
+        className={activeSection ? 'show' : ''}
+        alt=""
+        aria-hidden="true"
+      />
 
       {/* Two-panel layout */}
       <div id="layout">
@@ -49,8 +64,8 @@ export default function App() {
         {/* ── LEFT PANEL ── */}
         <div id="left">
 
-          {/* Idle background pattern */}
-          {!activeSection && <div className="pane-bg-pattern" aria-hidden="true" />}
+          {/* Background pattern (persistent) */}
+          <div className="pane-bg-pattern" aria-hidden="true" />
 
           {/* Name block */}
           <motion.div
@@ -58,6 +73,7 @@ export default function App() {
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.15, ease: 'easeOut' }}
+            style={{ fontFamily: nameplateFont, fontWeight: fonts.groups.nameplate.weight, fontStyle: fonts.groups.nameplate.style }}
           >
             <span className="fn">Preston</span>
             <span className="ln">Rank</span>
