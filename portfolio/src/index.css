@@ -89,6 +89,14 @@ body::before {
   position: relative; z-index: 10;
 }
 
+.emblem {
+  display: block;
+  width: 140px;
+  height: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
 .fn, .ln {
   display: block;
   font-family: inherit;

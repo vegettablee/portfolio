@@ -1,0 +1,162 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 320" fill="none" stroke="#FFFEDE" stroke-linecap="round" stroke-linejoin="round">
+
+  <!-- ═══ SPADE BODY ═══ -->
+  <path d="M 120 25
+           C 145 55 215 100 215 155
+           C 215 200 175 220 145 205
+           Q 128 197 130 210
+           L 148 265 L 92 265 L 110 210
+           Q 112 197 95 205
+           C 65 220 25 200 25 155
+           C 25 100 95 55 120 25 Z"
+        fill="rgba(0,12,12,0.55)"
+        stroke-width="1.8"/>
+
+  <!-- Inner nested spade -->
+  <path d="M 120 48
+           C 140 72 195 108 195 155
+           C 195 190 168 205 145 193
+           Q 132 188 133 200
+           L 143 250 L 97 250 L 107 200
+           Q 108 188 95 193
+           C 72 205 45 190 45 155
+           C 45 108 100 72 120 48 Z"
+        stroke-width="0.5" opacity="0.35"/>
+
+  <!-- ═══ GRAIN — flow lines following spade curvature (bottom→top) ═══ -->
+  <g class="grain">
+
+    <!-- Solid outer sweeps (follow the outer shoulder curvature closely) -->
+    <g stroke-width="0.6" opacity="0.55">
+      <path d="M 100 202 C 65 195 40 175 42 145 C 45 105 78 65 115 42"/>
+      <path d="M 140 202 C 175 195 200 175 198 145 C 195 105 162 65 125 42"/>
+    </g>
+
+    <!-- Dashed middle sweeps -->
+    <g stroke-width="0.5" opacity="0.5" stroke-dasharray="3 2.5">
+      <path d="M 103 200 C 75 188 55 170 55 140 C 60 108 92 75 118 47"/>
+      <path d="M 137 200 C 165 188 185 170 185 140 C 180 108 148 75 122 47"/>
+    </g>
+
+    <!-- Fine dotted mid-inner sweeps -->
+    <g stroke-width="0.5" opacity="0.45" stroke-dasharray="0.7 2.2">
+      <path d="M 106 200 C 88 180 75 160 72 130 C 75 100 100 78 120 55"/>
+      <path d="M 134 200 C 152 180 165 160 168 130 C 165 100 140 78 120 55"/>
+    </g>
+
+    <!-- Solid inner sweeps (near spine) -->
+    <g stroke-width="0.55" opacity="0.5">
+      <path d="M 110 198 C 105 165 100 130 105 95 C 110 65 117 47 120 42"/>
+      <path d="M 130 198 C 135 165 140 130 135 95 C 130 65 123 47 120 42"/>
+    </g>
+
+    <!-- Central spine (broken rhythm) -->
+    <path d="M 120 245 Q 118 200 120 155 Q 122 100 120 42"
+          stroke-width="0.6" opacity="0.55" stroke-dasharray="3 1.5 1 1.5"/>
+
+    <!-- Cross ticks perpendicular to grain (embedded texture) -->
+    <g stroke-width="0.5" opacity="0.5">
+      <line x1="105" y1="196" x2="115" y2="200"/>
+      <line x1="125" y1="200" x2="135" y2="196"/>
+      <line x1="48"  y1="145" x2="54"  y2="139"/>
+      <line x1="62"  y1="128" x2="68"  y2="122"/>
+      <line x1="80"  y1="108" x2="85"  y2="103"/>
+      <line x1="98"  y1="88"  x2="102" y2="83"/>
+      <line x1="192" y1="145" x2="186" y2="139"/>
+      <line x1="178" y1="128" x2="172" y2="122"/>
+      <line x1="160" y1="108" x2="155" y2="103"/>
+      <line x1="142" y1="88"  x2="138" y2="83"/>
+      <line x1="110" y1="62"  x2="115" y2="57"/>
+      <line x1="130" y1="62"  x2="125" y2="57"/>
+    </g>
+
+    <!-- Flow nodes (small dots at grain-convergence points) -->
+    <g fill="#FFFEDE" stroke="none" opacity="0.6">
+      <circle cx="120" cy="195" r="1"/>
+      <circle cx="42"  cy="145" r="0.8"/>
+      <circle cx="198" cy="145" r="0.8"/>
+      <circle cx="72"  cy="130" r="0.55"/>
+      <circle cx="168" cy="130" r="0.55"/>
+      <circle cx="118" cy="47"  r="0.9"/>
+      <circle cx="122" cy="47"  r="0.9"/>
+    </g>
+
+  </g>
+
+  <!-- ═══ OUROBOROS SNAKES (single group — target this for glow) ═══ -->
+  <g class="snakes" stroke-width="2.5">
+
+    <!-- ── LEFT SNAKE ── -->
+    <!-- Body: sweeps up left shoulder, extends across spade top to right head neck -->
+    <path d="M 42 208
+             C 25 195 12 173 20 148
+             C 28 125 46 100 68 78
+             C 84 62 98 50 108 42
+             C 116 34 126 27 129 25"/>
+
+    <!-- Head component: solid snake shape, facing LEFT, dot for eye -->
+    <g id="head-left">
+      <path d="M 129 23 Q 122 19 119 25 Q 122 31 129 27 Z" fill="#FFFEDE" stroke="none"/>
+      <circle cx="124" cy="23" r="1" fill="#001917" stroke="none"/>
+    </g>
+
+    <g stroke-width="0.75" opacity="0.7">
+      <line x1="36"  y1="203" x2="41"  y2="197"/>
+      <line x1="27"  y1="190" x2="33"  y2="185"/>
+      <line x1="20"  y1="176" x2="27"  y2="174"/>
+      <line x1="16"  y1="162" x2="24"  y2="161"/>
+      <line x1="16"  y1="148" x2="24"  y2="149"/>
+      <line x1="20"  y1="134" x2="28"  y2="137"/>
+      <line x1="26"  y1="120" x2="34"  y2="124"/>
+      <line x1="34"  y1="107" x2="41"  y2="112"/>
+      <line x1="44"  y1="94"  x2="50"  y2="99"/>
+      <line x1="56"  y1="82"  x2="61"  y2="88"/>
+      <line x1="70"  y1="70"  x2="74"  y2="76"/>
+      <line x1="84"  y1="58"  x2="87"  y2="65"/>
+      <line x1="98"  y1="49"  x2="100" y2="56"/>
+    </g>
+
+    <path d="M 42 208 L 50 216" stroke-width="1.2"/>
+
+    <!-- ── RIGHT SNAKE (mirror) ── -->
+    <!-- Body: sweeps up right shoulder, extends across spade top to left head neck -->
+    <path d="M 198 208
+             C 215 195 228 173 220 148
+             C 212 125 194 100 172 78
+             C 156 62 142 50 132 42
+             C 124 34 114 27 111 25"/>
+
+    <!-- Head component: solid snake shape, facing RIGHT, dot for eye -->
+    <g id="head-right">
+      <path d="M 111 23 Q 118 19 121 25 Q 118 31 111 27 Z" fill="#FFFEDE" stroke="none"/>
+      <circle cx="116" cy="23" r="1" fill="#001917" stroke="none"/>
+    </g>
+
+    <g stroke-width="0.75" opacity="0.7">
+      <line x1="204" y1="203" x2="199" y2="197"/>
+      <line x1="213" y1="190" x2="207" y2="185"/>
+      <line x1="220" y1="176" x2="213" y2="174"/>
+      <line x1="224" y1="162" x2="216" y2="161"/>
+      <line x1="224" y1="148" x2="216" y2="149"/>
+      <line x1="220" y1="134" x2="212" y2="137"/>
+      <line x1="214" y1="120" x2="206" y2="124"/>
+      <line x1="206" y1="107" x2="199" y2="112"/>
+      <line x1="196" y1="94"  x2="190" y2="99"/>
+      <line x1="184" y1="82"  x2="179" y2="88"/>
+      <line x1="170" y1="70"  x2="166" y2="76"/>
+      <line x1="156" y1="58"  x2="153" y2="65"/>
+      <line x1="142" y1="49"  x2="140" y2="56"/>
+    </g>
+
+    <path d="M 198 208 L 190 216" stroke-width="1.2"/>
+
+  </g>
+
+  <!-- ═══ BOTTOM STEM PATTERN ═══ -->
+  <g stroke-width="0.7" opacity="0.65">
+    <line x1="100" y1="248" x2="140" y2="248" stroke-dasharray="1.5 2"/>
+    <path d="M 120 253 L 125 258 L 120 263 L 115 258 Z"/>
+    <line x1="108" y1="268" x2="132" y2="268" stroke-width="0.9"/>
+  </g>
+
+</svg>

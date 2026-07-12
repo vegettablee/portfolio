@@ -4,6 +4,7 @@ import Circle from './components/Circle'
 import RightPanel from './components/RightPanel'
 import fonts from './portfolio_content/fonts.json'
 import aceSymbol from './assets/ace_symbol.svg'
+import spadeOuroboros from './assets/spade_ouroboros_1.svg'
 
 const nameplateFont = `'${fonts.groups.nameplate.family}', ${fonts.groups.nameplate.fallback}`
 
@@ -73,10 +74,8 @@ export default function App() {
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.15, ease: 'easeOut' }}
-            style={{ fontFamily: nameplateFont, fontWeight: fonts.groups.nameplate.weight, fontStyle: fonts.groups.nameplate.style }}
           >
-            <span className="fn">Preston</span>
-            <span className="ln">Rank</span>
+            <img src={spadeOuroboros} className="emblem" alt="" />
           </motion.div>
 
           {/* Divider glow */}
