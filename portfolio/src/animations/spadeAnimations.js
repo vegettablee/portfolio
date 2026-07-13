@@ -8,7 +8,9 @@ import { useEffect, useState } from 'react'
    ═══════════════════════════════════════════════════════════════ */
 
 export const SPADE_SEQUENCE = ['vitality', 'serpents', 'tide']
-export const PHASE_MS = 4000
+/* per-phase display windows — serpents runs longer so the head glow can
+   hold after the traces arrive */
+export const PHASE_MS = { vitality: 5000, serpents: 5500, tide: 5000 }
 
 /* Set to 'vitality' | 'serpents' | 'tide' to pin one animation while reviewing */
 export const FORCED_ANIMATION = null
@@ -39,6 +41,7 @@ export const VITALITY = {
 export const TIDE = {
   bright: '#7FB4D4',  // cold surface blue
   deep:   '#3A6B85',  // deep water
+  grey:   '#8A95A2',  // rail steel — what the beige interior washes into
 }
 
 /* Static styling of the masked blue duplicate layer — the emblem renders
@@ -54,8 +57,16 @@ export function useSpadePhase() {
   const [idx, setIdx] = useState(0)
   useEffect(() => {
     if (FORCED_ANIMATION) return
-    const t = setInterval(() => setIdx(i => (i + 1) % SPADE_SEQUENCE.length), PHASE_MS)
-    return () => clearInterval(t)
+    let t
+    const schedule = (i) => {
+      t = setTimeout(() => {
+        const next = (i + 1) % SPADE_SEQUENCE.length
+        setIdx(next)
+        schedule(next)
+      }, PHASE_MS[SPADE_SEQUENCE[i]] ?? 4000)
+    }
+    schedule(0)
+    return () => clearTimeout(t)
   }, [])
   return FORCED_ANIMATION ?? SPADE_SEQUENCE[idx]
 }
@@ -124,10 +135,11 @@ const vitality = {
       ...breathFilter,
       opacity: [BASE_OPACITY.diamonds, 0.9, 0.6, 0.9, 0.6, 0.9, BASE_OPACITY.diamonds],
     },
-    transition: { duration: 3.6, delay: 0.1, times: BREATH_TIMES, ease: 'easeInOut' },
+    transition: { duration: 3.6, times: BREATH_TIMES, ease: 'easeInOut' },
   },
-  /* i = 0 stem diamond, 1 connector, 2..7 bottom row left→right */
-  diamondStroke: (i) => breathStroke(0.06 + i * 0.045),
+  /* all diamonds breathe in lockstep with the body — no stagger; offsets
+     read as an off-tempo blink at this breath rate */
+  diamondStroke: () => breathStroke(0),
   /* interior grain breathes with the body but stays prominent through the
      glow — the outline is allowed to sink on the exhale, the grain is not */
   grainGroup: {
@@ -158,10 +170,23 @@ const vitality = {
    runs slow (arriving at the RIGHT head). Each arrival gets its
    own flare beat. Scale ticks blink as the trace passes them. */
 
+/* Relay timeline:
+   1. stem trace leaves the base of the spade, splits, runs up to the two
+      small cusps where the outline curls in before the lobes hang
+   2. at the cusps (HANDOFF) two things launch at once:
+      the interior grain lines draw inward/upward toward the center,
+      and the (delayed) snake traces depart from the rattle tails */
+const STEM = { delay: 0.15, duration: 0.7, ease: 'easeInOut' }
+const HANDOFF = STEM.delay + STEM.duration            // 0.85s — cusp arrival
+
 const TRACE = {
-  left:  { delay: 0.3, duration: 3.0, ease: 'easeInOut' }, // ends 3.3s → right head
-  right: { delay: 0.3, duration: 3.0, ease: 'easeInOut' }, // mirrored — both arrive together
+  left:  { delay: HANDOFF, duration: 2.4, ease: 'easeInOut' }, // ends 3.25s → right head
+  right: { delay: HANDOFF, duration: 2.4, ease: 'easeInOut' }, // mirrored — both arrive together
 }
+/* grain lines are roughly half the length of a snake spine, so half the
+   duration ≈ the same drawing speed */
+const GRAIN_TRACE = { delay: HANDOFF, duration: 1.2, ease: 'easeInOut' }
+
 const ARRIVAL = {
   leftHead:  TRACE.right.delay + TRACE.right.duration,
   rightHead: TRACE.left.delay + TRACE.left.duration,
@@ -176,13 +201,18 @@ const spineTrace = (side, glowUnderlay) => ({
   },
 })
 
+/* fast flare on arrival, then the glow holds ~1.5s before fading */
 const headFlare = (arrival) => ({
   animate: {
-    scale: [1, 1.22, 1],
-    opacity: [BASE_OPACITY.heads, 1, BASE_OPACITY.heads],
-    filter: [chalkGlow(0, 0), chalkGlow(5, 0.9), chalkGlow(0, 0)],
+    scale: [1, 1.22, 1.08, 1.08, 1],
+    opacity: [BASE_OPACITY.heads, 1, 1, 1, BASE_OPACITY.heads],
+    filter: [
+      chalkGlow(0, 0), chalkGlow(5, 0.9),
+      chalkGlow(3.5, 0.75), chalkGlow(3.5, 0.75),
+      chalkGlow(0, 0),
+    ],
   },
-  transition: { delay: arrival, duration: 0.55, times: [0, 0.4, 1], ease: 'easeOut' },
+  transition: { delay: arrival, duration: 2.05, times: [0, 0.1, 0.25, 0.83, 1], ease: 'easeOut' },
   style: fillBox,
 })
 
@@ -207,9 +237,32 @@ const rattleIgnite = {
   },
 }
 
+const stemTrace = (glowUnderlay) => ({
+  initial: { pathLength: 0, opacity: 0 },
+  animate: { pathLength: 1, opacity: glowUnderlay ? 0.5 : 1 },
+  transition: {
+    pathLength: STEM,
+    opacity: { delay: STEM.delay, duration: 0.15 },
+  },
+})
+
 const serpents = {
   rattleLeft:  rattleIgnite,
   rattleRight: rattleIgnite,
+  stemLeft:      stemTrace(false),
+  stemRight:     stemTrace(false),
+  stemGlowLeft:  stemTrace(true),
+  stemGlowRight: stemTrace(true),
+  /* interior lines draw from their bottom ends (at the cusps) inward and
+     up toward the center once the stem trace hands off */
+  grainLine: (baseOp) => ({
+    initial: { pathLength: 0, opacity: 0 },
+    animate: { pathLength: 1, opacity: baseOp },
+    transition: {
+      pathLength: GRAIN_TRACE,
+      opacity: { delay: GRAIN_TRACE.delay, duration: 0.15 },
+    },
+  }),
   spineLeft:      spineTrace('left',  false),
   spineRight:     spineTrace('right', false),
   spineGlowLeft:  spineTrace('left',  true),
@@ -243,6 +296,28 @@ const tide = {
     animate: { attrY: -150 },
     transition: { duration: 3.9, ease: 'easeInOut' },
   },
+  /* the chalk outline dissolves as the swell passes over it… */
+  bodyGroup: {
+    animate: { opacity: [BASE_OPACITY.body, BASE_OPACITY.body, 0.15, 0.12] },
+    transition: { duration: 4, times: [0, 0.2, 0.75, 1], ease: 'easeInOut' },
+  },
+  /* …and a heavier blue outline rises in its place — washed into the tide */
+  tideBodyOutline: {
+    animate: { opacity: [0, 0.15, 0.6, 0.5] },
+    transition: { duration: 4, times: [0, 0.25, 0.75, 1], ease: 'easeInOut' },
+    style: { filter: 'drop-shadow(0 0 4px rgba(127, 180, 212, 0.6))' },
+  },
+  /* the interior greys out as the swell travels up — beige washed to steel,
+     trailing the band the same way the outline dissolve does */
+  grainLine: () => ({
+    animate: { stroke: TIDE.grey },
+    transition: { delay: 0.6, duration: 2.6, ease: 'easeInOut' },
+  }),
+  /* the diamonds sit where the swell enters, so they grey out first */
+  diamondStroke: (i) => ({
+    animate: { stroke: TIDE.grey },
+    transition: { delay: 0.2 + i * 0.04, duration: 1.2, ease: 'easeInOut' },
+  }),
 }
 
 export const SPADE_ANIMATIONS = { vitality, serpents, tide }

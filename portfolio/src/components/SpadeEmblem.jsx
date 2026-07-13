@@ -21,16 +21,9 @@ const GRAIN_LINES = [
   { d: 'M130 198C135 165 140 130 135 95C130 65 123 47 120 42',     w: 0.55, op: 0.5 },
   { d: 'M110 62L115 57', w: 0.5, op: 0.5 },
   { d: 'M130 62L125 57', w: 0.5, op: 0.5 },
-  { d: 'M120.25 40L120.25 199.5', w: 0.5, op: 0.5, color: '#FFFFFF' },
+  /* authored top→bottom in the source; reversed so serpents draws it upward */
+  { d: 'M120.25 199.5L120.25 40', w: 0.5, op: 0.5, color: '#FFFFFF' },
   { d: 'M106.5 201L110 198L120 199.5L130 198L133 201', w: 0.5, op: 0.5 },
-  { d: 'M120.25 200L120.25 246', w: 0.5, op: 0.5 },
-]
-
-const GRAIN_DOTS = [
-  'M42 145.8C42.4418 145.8 42.7999 145.442 42.7999 145C42.7999 144.558 42.4418 144.2 42 144.2C41.5581 144.2 41.2 144.558 41.2 145C41.2 145.442 41.5581 145.8 42 145.8Z',
-  'M198 145.8C198.442 145.8 198.8 145.442 198.8 145C198.8 144.558 198.442 144.2 198 144.2C197.558 144.2 197.2 144.558 197.2 145C197.2 145.442 197.558 145.8 198 145.8Z',
-  'M72 130.55C72.3037 130.55 72.55 130.304 72.55 130C72.55 129.696 72.3037 129.45 72 129.45C71.6962 129.45 71.45 129.696 71.45 130C71.45 130.304 71.6962 130.55 72 130.55Z',
-  'M168 130.55C168.304 130.55 168.55 130.304 168.55 130C168.55 129.696 168.304 129.45 168 129.45C167.696 129.45 167.45 129.696 167.45 130C167.45 130.304 167.696 130.55 168 130.55Z',
 ]
 
 /* Snake bodies — each runs bottom rattle → up the rim → top-center head.
@@ -55,6 +48,11 @@ const RATTLE_RIGHT = 'M197 208L193.154 209.41C186.619 211.806 182.591 218.384 18
    body-path coordinates, drawn tail → head during "serpents". */
 const SPINE_LEFT  = 'M43 205C24 190 16 168 21 148C30 116 46 96 68 77C82 64 97 52 112 44C126 37 137 30 141 23C142 20 140 17 136.5 15.8'
 const SPINE_RIGHT = 'M197 205C216 190 224 168 219 148C210 116 194 96 172 77C158 64 143 52 128 44C114 37 103 30 99 23C98 20 100 17 103.5 15.8'
+
+/* Stem traces — from the base of the spade, out along the bottom edge and
+   up the stem sides to the cusps where the lobes begin */
+const STEM_TRACE_LEFT  = 'M120 265L92 265L110 210'
+const STEM_TRACE_RIGHT = 'M120 265L148 265L130 210'
 
 const DIAMOND_CONNECTOR = 'M100 248H140'
 const DIAMOND_STEM = 'M120 200L133 223L120 246L107 223L120 200Z'
@@ -129,11 +127,13 @@ export default function SpadeEmblem() {
                   strokeDasharray={l.dash}
                   {...fn('grainLine', l.op)} />
               ))}
-              <g opacity="0.6">
-                {GRAIN_DOTS.map((d, i) => <path key={i} d={d} fill={CHALK} />)}
-              </g>
             </motion.g>
           </motion.g>
+
+          {/* tide only: heavier blue outline that replaces the dissolving
+              chalk one — unmasked so it persists after the band passes */}
+          <motion.path d={BODY_MAIN} {...stroke({ strokeWidth: 2 })}
+            stroke={TIDE.bright} opacity="0" {...p('tideBodyOutline')} />
 
           {/* ═══ TIDE LAYER — cold-blue duplicate revealed by the sweeping mask ═══ */}
           <g id="tide-layer" mask="url(#tide-mask)"
@@ -180,13 +180,21 @@ export default function SpadeEmblem() {
 
           {/* ═══ SERPENT TRACES — glow underlay + bright line, tail → head ═══ */}
           <g id="spines">
+            <motion.path d={STEM_TRACE_LEFT}  {...stroke({ strokeWidth: 3 })}
+              opacity="0" filter="url(#spade-blur)" {...p('stemGlowLeft')} />
+            <motion.path d={STEM_TRACE_RIGHT} {...stroke({ strokeWidth: 3 })}
+              opacity="0" filter="url(#spade-blur)" {...p('stemGlowRight')} />
+            <motion.path d={STEM_TRACE_LEFT}  {...stroke({ strokeWidth: 1.5 })}
+              opacity="0" {...p('stemLeft')} />
+            <motion.path d={STEM_TRACE_RIGHT} {...stroke({ strokeWidth: 1.5 })}
+              opacity="0" {...p('stemRight')} />
             <motion.path d={SPINE_LEFT}  {...stroke({ strokeWidth: 3 })}
               opacity="0" filter="url(#spade-blur)" {...p('spineGlowLeft')} />
             <motion.path d={SPINE_RIGHT} {...stroke({ strokeWidth: 3 })}
               opacity="0" filter="url(#spade-blur)" {...p('spineGlowRight')} />
-            <motion.path d={SPINE_LEFT}  {...stroke({ strokeWidth: 1.3 })}
+            <motion.path d={SPINE_LEFT}  {...stroke({ strokeWidth: 1.5 })}
               opacity="0" {...p('spineLeft')} />
-            <motion.path d={SPINE_RIGHT} {...stroke({ strokeWidth: 1.3 })}
+            <motion.path d={SPINE_RIGHT} {...stroke({ strokeWidth: 1.5 })}
               opacity="0" {...p('spineRight')} />
           </g>
 
@@ -202,7 +210,12 @@ export default function SpadeEmblem() {
                   {...fn('diamondStroke', 2 + i)} />
               ))}
             </g>
-            <path d="M107 222.65H133" {...stroke({ strokeWidth: 0.7 })} strokeOpacity="0.5" />
+            {/* crosshair inside the stem diamond — vertical + horizontal
+                breathe together with the diamonds during vitality */}
+            <motion.path d="M120.25 200L120.25 246"
+              {...stroke({ strokeWidth: 0.5 })} opacity="0.5" {...fn('diamondStroke', 8)} />
+            <motion.path d="M107 222.65H133"
+              {...stroke({ strokeWidth: 0.7 })} opacity="0.5" {...fn('diamondStroke', 8)} />
           </motion.g>
 
           {/* ═══ SNAKE HEADS (+ arrival flashes) ═══ */}
