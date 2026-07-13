@@ -54,7 +54,7 @@ export default function RightPanel({ activeSection, isFirstRender }) {
             <div className="pane-default-inner">
               <motion.div className="d-eye"    {...stagger(isFirstRender ? 1.1  : 0.05)} >Est. — United States</motion.div>
               <motion.div className="d-line"   {...stagger(isFirstRender ? 1.25 : 0.15)} >
-                Building systems at the intersection of<br /><em>product and engineering.</em>
+                Hi, I'm Preston Rank,<br /><em>take a seat at the table.</em>
               </motion.div>
               <motion.div className="d-hint"   {...stagger(isFirstRender ? 1.5  : 0.25)} >approach the circle to explore</motion.div>
               <motion.div className="d-socials" {...stagger(isFirstRender ? 1.7  : 0.35)} >

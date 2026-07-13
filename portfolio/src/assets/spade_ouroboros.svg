@@ -96,7 +96,7 @@
 
     <!-- Head component: solid snake shape, facing LEFT, dot for eye -->
     <g id="head-left">
-      <path d="M 129 23 Q 122 19 119 25 Q 122 31 129 27 Z" fill="#FFFEDE" stroke="none"/>
+      <path d="M 129 23 Q 122 19 119 25 Q 122 31 129 27 Z" fill="#FFFEDE" opacity="0.5" stroke="none"/>
       <circle cx="124" cy="23" r="1" fill="#001917" stroke="none"/>
     </g>
 

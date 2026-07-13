@@ -10,9 +10,16 @@ Reference files:
 ## 01 — SELECTIONS
 
 ```
-PALETTE  :  Custom — "Mist Teal" (override of PALETTE-C)
-            #143842 bg · #1A4854 surface · #D8DDE8 text · #E8DCC0 accent (ivory) · #0D2A33 secondary · #4A6A7C secondary-accent (slate)
-FONT     :  FONT-4      →  Cormorant Garamond (heading) · DM Sans 300 (body) · Fira Code (mono/labels)
+PALETTE  :  Custom — "Felt & Smoke" (override of PALETTE-C, as actually implemented)
+            Mood: a dark billiards hall — felt table under low light, chalk, rail steel. Gambling-den mystery, not corporate-cool.
+            #001719 bg (felt, near-black teal) · #10131A surface (shadowed rail) · #D8DDE8 text (smoke) · #8A95A2 accent (rail steel / slate)
+            #FFFEDE chalk (sparing highlight only, never a general accent)
+            --muted: rgba(216,221,232,0.42) · --dim: rgba(216,221,232,0.17) · --border: rgba(138,149,162,0.14)
+FONT     :  FONT-4 (split)  →  Cormorant Garamond + Frank Ruhl Libre (heading, split by context — see below) · DM Sans 300 (body) · Fira Code (mono/labels)
+
+  Cormorant Garamond    :  ghost number, name first-name, experience company name, project title, about bio + interests list
+  Frank Ruhl Libre      :  circle node labels, default-pane headline ("Hi, I'm Preston Rank..."), experience-card frame title/status/preview text
+  Chalk (#FFFEDE)       :  reserved for standout elements only — name first-name, experience-card titles/status text, exp-frame title. Not a general accent.
 ```
 
 ---
@@ -57,18 +64,18 @@ Node positions (on r=210 ring):
   About      : 50° below horizontal  → cx=414.9, cy=440.9
 
 Per node:
-  - Dot: r=3.5, accent color, opacity 0.5 → 1.0 on active
+  - Dot: r=3.5, accent color (slate), opacity 0.5 → 1.0 on active
   - Ring: r=11, stroke accent, opacity 0 → 0.35 on active
   - Line: stroke-dashoffset draw animation toward right edge (x2=548) on active
-  - Label: Fira Code 8.5px, muted → var(--text) on active
+  - Label: Frank Ruhl Libre 13px, muted → var(--text) on active
   - Trigger: transparent circle r=30 for hover target
 
 Arc highlights (r=210, ±15° around each node):
   Experience : M 368.7,89.7  A 210,210 0 0,1 452.0,159.6
   Projects   : M 482.8,225.7 A 210,210 0 0,1 482.8,334.3
   About      : M 452.0,400.4 A 210,210 0 0,1 368.7,470.3
-  Style      : stroke #E8DCC0 (ivory), stroke-width 2.4, round caps,
-              opacity 0.78 (ambient — softens to 0.5 idle, brightens to 0.9 on active node)
+  Style      : stroke var(--accent) #8A95A2 (rail steel), stroke-width 2.5, round caps,
+              opacity 0 idle → 0.55 on active (transition, not always-ambient)
 
 No cyan ring-hugs around the orb. Tight rings removed; arcs alone signal the orb.
 ```
@@ -79,7 +86,7 @@ No cyan ring-hugs around the orb. Tight rings removed; arcs alone signal the orb
 
 ```
 Position    :  Top-left of left panel, z-index above circle
-First name  :  Cormorant Garamond, italic, weight 300, clamp(44px–82px), color var(--text)
+First name  :  Cormorant Garamond, italic, weight 300, clamp(44px–82px), color #FFFEDE (chalk)
 Last name   :  Cormorant Garamond, roman, weight 400, same size, color var(--muted)
 Line height :  0.88
 Animation   :  fadeUp staggered (first 0.15s delay, last 0.4s delay)
@@ -92,8 +99,8 @@ Animation   :  fadeUp staggered (first 0.15s delay, last 0.4s delay)
 ```
 Layout      :  Flex column, justify center, full height
 Eyebrow     :  "Est. — United States" — Fira Code 9px, accent color, 0.22em tracking
-Headline    :  "Building systems at the intersection of product and engineering."
-              Cormorant Garamond, weight 300, ~28px, muted — "product and engineering" italic+white
+Headline    :  "Hi, I'm Preston Rank, take a seat at the table."
+              Frank Ruhl Libre, weight 300, clamp(18px–28px), muted — "take a seat at the table" italic+white
 Hint        :  "approach the circle to explore" — Fira Code 9px, dim, left rule line
 Socials     :  LinkedIn ↗ · GitHub ↗ · email — Fira Code 9px, accent, 0.55 opacity → 1 hover
 Animation   :  Each element fadeUp, staggered 1.1s–1.7s on load
@@ -113,8 +120,13 @@ Divider glow:  1px right edge of left panel, accent gradient top→bottom→top
 
 Shared label:  "0N — Section Name" — Fira Code 9px, accent, 0.22em, with 44px border-color rule after
 
-Experience entries (3):
-  Layout    :  Stacked rows, border-bottom var(--border)
+Experience entries — framed card (see exp-frame in index.css):
+  Frame     :  aspect-ratio 706/642, bg rgba(4,24,24,0.8), corner ornament overlays (4 corner SVGs)
+  Frame title (exp-title) :  Frank Ruhl Libre 26px, color #FFFEDE (chalk)
+  Card       :  offset double-layer (front #0C4745 solid + back layer, back tints on hover)
+  Card status:  Frank Ruhl Libre 14px #ADADAD label + live green dot (#4CD964, 1px black border)
+  Card title :  Frank Ruhl Libre weight 500, 25px, color #FFFEDE (chalk)
+  Card preview text : Frank Ruhl Libre 13px, #ADADAD
   Company   :  Cormorant Garamond italic 26px, white
   Date      :  Fira Code 9px, dim — right-aligned in same row
   Role      :  DM Sans 9px, 0.16em tracking, uppercase, accent
@@ -137,20 +149,18 @@ About:
 ## 08 — GLOBAL DETAILS
 
 ```
-Cursor        :  Custom square (13px, 1px slate border #4A6A7C) + 3px dot center
+Cursor        :  Custom square (13px, 1px accent border #8A95A2) + 3px dot center
                  Expands to 22px when hovering an active node
-Grain overlay :  Two-pass cool-light noise, screen blend (not multiply — works against teal)
-                 Pass A (z:60): SVG fractalNoise 320px tile, baseFrequency 0.78, octaves 3,
-                                colorMatrix tinted (0.80, 0.88, 0.98), alpha 0.10, opacity 0.55
-                 Pass B (z:2):  SVG fractalNoise 240px tile, baseFrequency 1.05, octaves 2,
-                                colorMatrix tinted (0.72, 0.82, 0.95), alpha 0.08, opacity 0.40
-                 Both pointer-events: none, mix-blend-mode: screen
+Grain overlay :  Single-pass fractalNoise, body::before, z:400, opacity 0.026
+                 SVG feTurbulence baseFrequency 0.85, octaves 4, stitchTiles, 160px tile
+                 pointer-events: none (no color tint — raw noise, very low opacity)
+Default-pane background : pane-bg-pattern — pattern_portfolio_1.png, cover/center, behind pane content (z:0)
 Scroll        :  overflow hidden on html/body — intentional, no scroll
 Animations    :  CSS only for load sequence. JS IntersectionObserver not needed (no scroll).
                  Node interaction via mouseenter/mouseleave JS (~30 lines)
 Border radius :  None — all elements are sharp
-Dividers      :  1px solid var(--border) = rgba(232,220,192,0.14)  /* ivory at low alpha */
-Background    :  Solid Mist Teal #143842 — flat color, no gradient. Texture is grain only.
+Dividers      :  1px solid var(--border) = rgba(138,149,162,0.14)  /* accent (slate) at low alpha */
+Background    :  Solid felt teal-black #001719 — flat color, no gradient. Texture is grain + pane pattern only.
 ```
 
 ---

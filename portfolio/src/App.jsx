@@ -4,7 +4,7 @@ import Circle from './components/Circle'
 import RightPanel from './components/RightPanel'
 import fonts from './portfolio_content/fonts.json'
 import aceSymbol from './assets/ace_symbol.svg'
-import spadeOuroboros from './assets/spade_ouroboros_1.svg'
+import SpadeEmblem from './components/SpadeEmblem'
 
 const nameplateFont = `'${fonts.groups.nameplate.family}', ${fonts.groups.nameplate.fallback}`
 
@@ -75,7 +75,7 @@ export default function App() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.15, ease: 'easeOut' }}
           >
-            <img src={spadeOuroboros} className="emblem" alt="" />
+            <SpadeEmblem />
           </motion.div>
 
           {/* Divider glow */}

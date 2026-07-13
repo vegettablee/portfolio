@@ -95,6 +95,15 @@ body::before {
   height: auto;
   user-select: none;
   -webkit-user-drag: none;
+  overflow: visible;
+}
+.emblem-phase {
+  font-family: 'Fira Code', monospace;
+  font-size: 8px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-top: 6px;
 }
 
 .fn, .ln {
